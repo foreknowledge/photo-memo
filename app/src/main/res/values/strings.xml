@@ -1,5 +1,13 @@
 <resources>
     <string name="app_name">Photo Memo</string>
 
-    <string name="memo_list">메모 목록</string>
+    <string name="memo_list">모든 메모</string>
+
+    <string name="text_create_memo">새 메모</string>
+    <string name="text_save">저장</string>
+    <string name="text_cancel">취소</string>
+    <string name="text_memo_title">제목</string>
+    <string name="text_memo_description">내용</string>
+
+    <string name="text_memo_notice">메모를 추가 해 보세요.</string>
 </resources>
