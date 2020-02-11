@@ -9,5 +9,6 @@
     <string name="text_memo_title">제목</string>
     <string name="text_memo_description">내용</string>
 
+    <string name="text_image_description">썸네일 이미지</string>
     <string name="text_memo_notice">메모를 추가 해 보세요.</string>
 </resources>

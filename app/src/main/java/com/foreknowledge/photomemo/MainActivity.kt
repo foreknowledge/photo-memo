@@ -15,7 +15,7 @@ class MainActivity : AppCompatActivity() {
 
         memo_list.setHasFixedSize(true)
         memo_list.layoutManager = LinearLayoutManager(this)
-
+        memo_list.adapter = MemoListAdapter(getSampleMemo())
     }
 
     fun createMemo(v: View) {

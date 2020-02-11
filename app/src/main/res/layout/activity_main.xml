@@ -49,7 +49,8 @@
             android:layout_gravity="center"
             android:layout_marginBottom="40dp"
             android:text="@string/text_memo_notice"
-            android:textSize="16sp"/>
+            android:textSize="16sp"
+            android:visibility="invisible" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/memo_list"
