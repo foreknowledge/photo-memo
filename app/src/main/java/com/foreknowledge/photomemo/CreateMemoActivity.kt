@@ -71,8 +71,10 @@ class CreateMemoActivity : AppCompatActivity() {
                 val imageBitmap = tryReadBitmap(data.data!!)
 
                 imageBitmap?.let {
-                    imagesAdapter.addImage(imageBitmap)
-                    imagesAdapter.notifyDataSetChanged()
+                    if (imagesAdapter.addImage(imageBitmap))
+                        imagesAdapter.notifyDataSetChanged()
+                    else
+                        Toast.makeText(context, "이미지 첨부는 ${imagesAdapter.MAX_IMAGE_COUNT}개까지만 가능합니다.", Toast.LENGTH_SHORT).show()
                 }
             }
         }

@@ -9,8 +9,15 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_image.view.*
 
 class ImageListAdapter(private val context: Context, private val images: MutableList<Bitmap>) : RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>() {
+    val MAX_IMAGE_COUNT = 10
 
-    fun addImage(bitmap: Bitmap) = images.add(bitmap)
+    fun addImage(bitmap: Bitmap): Boolean {
+        if (images.size < MAX_IMAGE_COUNT) {
+            images.add(bitmap)
+            return true
+        }
+        return false
+    }
 
     class ImageViewHolder(val view: View): RecyclerView.ViewHolder(view)
 
