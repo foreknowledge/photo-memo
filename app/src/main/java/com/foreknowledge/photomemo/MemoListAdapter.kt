@@ -4,14 +4,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.memo_item.view.*
+import kotlinx.android.synthetic.main.item_memo.view.*
 
-class MemoListAdapter(private val memoList: List<Memo>) : RecyclerView.Adapter<MemoListAdapter.MemoViewHolder>() {
+class MemoListAdapter(private val memoList: List<Memo>, private val itemClickListener: ItemClickListener) : RecyclerView.Adapter<MemoListAdapter.MemoViewHolder>() {
 
-    class MemoViewHolder(val view: View): RecyclerView.ViewHolder(view)
+    //fun getItem(position: Int) = memoList[position]
+
+    open class MemoViewHolder(val view: View): RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHolder {
-        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.memo_item, parent, false)
+        val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_memo, parent, false)
         return MemoViewHolder(view)
     }
 
@@ -26,6 +28,10 @@ class MemoListAdapter(private val memoList: List<Memo>) : RecyclerView.Adapter<M
         if (memo.thumbnail != null && memo.thumbnail.isNotEmpty())
             holder.view.thumbnail_image.setImageBitmap(memo.thumbnail[0])
         else
-            holder.view.thumbnail_card_view.visibility = View.GONE
+            holder.view.thumbnail_image.visibility = View.GONE
+
+        holder.view.setOnClickListener{
+            itemClickListener.onClick(it, position)
+        }
     }
 }
