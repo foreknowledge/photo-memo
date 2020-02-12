@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/colorBack"
+    android:background="@color/colorGray1"
     tools:context=".MainActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -24,6 +24,7 @@
             android:text="@string/memo_list" />
 
         <Button
+            android:id="@+id/btn_create_memo"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end"
@@ -33,7 +34,6 @@
             android:text="@string/text_create_memo"
             android:textSize="18sp"
             android:background="@android:color/transparent"
-            android:onClick="createMemo"
             style="?attr/buttonBarStyle" />
 
     </androidx.appcompat.widget.Toolbar>

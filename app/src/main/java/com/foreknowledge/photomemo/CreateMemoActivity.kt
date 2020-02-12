@@ -19,14 +19,9 @@ class CreateMemoActivity : AppCompatActivity() {
         images_grid.setHasFixedSize(true)
         images_grid.layoutManager = GridLayoutManager(context, 4)
         images_grid.adapter = ImageListAdapter(context, getSampleImages())
-    }
 
-    fun saveMemo(v: View) {
-
-    }
-
-    fun cancel(v: View) {
-        finish()
+        btn_save_memo.setOnClickListener {  }
+        btn_cancel.setOnClickListener { finish() }
     }
 
     private fun getSampleImages(): List<Bitmap> {

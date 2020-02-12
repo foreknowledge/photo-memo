@@ -6,6 +6,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_memo.view.*
 
+interface ItemClickListener {
+    fun onClick(view: View, position: Int)
+}
+
 class MemoListAdapter(private val memoList: List<Memo>, private val itemClickListener: ItemClickListener) : RecyclerView.Adapter<MemoListAdapter.MemoViewHolder>() {
 
     //fun getItem(position: Int) = memoList[position]
@@ -25,10 +29,12 @@ class MemoListAdapter(private val memoList: List<Memo>, private val itemClickLis
         holder.view.memo_title.text = memo.title
         holder.view.memo_content.text = memo.content
 
-        if (memo.thumbnail != null && memo.thumbnail.isNotEmpty())
+        if (memo.thumbnail != null && memo.thumbnail.isNotEmpty()) {
             holder.view.thumbnail_image.setImageBitmap(memo.thumbnail[0])
+            holder.view.num_of_images.text = memo.thumbnail.size.toString()
+        }
         else
-            holder.view.thumbnail_image.visibility = View.GONE
+            holder.view.thumbnail_card_view.visibility = View.GONE
 
         holder.view.setOnClickListener{
             itemClickListener.onClick(it, position)

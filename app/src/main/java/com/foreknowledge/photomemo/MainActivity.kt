@@ -17,14 +17,14 @@ class MainActivity : AppCompatActivity() {
         memo_list.setHasFixedSize(true)
         memo_list.layoutManager = LinearLayoutManager(this)
 
-        memo_list.adapter = MemoListAdapter(getSampleMemo(), object: ItemClickListener{
+        memo_list.adapter = MemoListAdapter(getSampleMemo(this@MainActivity), object: ItemClickListener{
             override fun onClick(view: View, position: Int) {
-                Toast.makeText(this@MainActivity, "position = $position", Toast.LENGTH_SHORT).show()
+                switchTo(DetailMemoActivity::class.java)
             }
         })
-    }
 
-    fun createMemo(v: View) = switchTo(CreateMemoActivity::class.java)
+        btn_create_memo.setOnClickListener { switchTo(CreateMemoActivity::class.java) }
+    }
 
     private fun switchTo(activity: Class<*>) {
         val intent = Intent(this, activity)
