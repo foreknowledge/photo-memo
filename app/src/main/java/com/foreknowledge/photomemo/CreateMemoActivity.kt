@@ -12,6 +12,7 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.foreknowledge.photomemo.ImageListAdapter.Companion.MAX_IMAGE_COUNT
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_memo.*
 import java.io.InputStream
@@ -19,8 +20,10 @@ import java.io.InputStream
 class CreateMemoActivity : AppCompatActivity() {
     private val context = this@CreateMemoActivity
 
-    private val CHOOSE_IMAGE_FROM_CAMERA = 101
-    private val CHOOSE_IMAGE_FROM_GALLERY = 102
+    companion object {
+        const val CHOOSE_IMAGE_FROM_CAMERA = 101
+        const val CHOOSE_IMAGE_FROM_GALLERY = 102
+    }
 
     private val imagesAdapter = ImageListAdapter(context, mutableListOf())
 
@@ -74,7 +77,7 @@ class CreateMemoActivity : AppCompatActivity() {
                     if (imagesAdapter.addImage(imageBitmap))
                         imagesAdapter.notifyDataSetChanged()
                     else
-                        Toast.makeText(context, "이미지 첨부는 ${imagesAdapter.MAX_IMAGE_COUNT}개까지만 가능합니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(context, "이미지 첨부는 ${MAX_IMAGE_COUNT}개까지만 가능합니다.", Toast.LENGTH_SHORT).show()
                 }
             }
         }
