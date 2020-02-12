@@ -15,4 +15,13 @@
     <string name="text_memo_notice">메모를 추가 해 보세요.</string>
 
     <string name="btn_add_image">+ 추가</string>
+
+    <string-array name="option_add_image">
+        <item>사진 촬영하기</item>
+        <item>갤러리에서 가져오기</item>
+        <item>외부 이미지 주소로 가져오기</item>
+    </string-array>
+    <string name="delete_message">메모를 삭제하시겠습니까?</string>
+    <string name="btn_ok_text">삭제</string>
+    <string name="btn_cancel_text">취소</string>
 </resources>

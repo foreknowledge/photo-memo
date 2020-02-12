@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     tools:context=".CreateMemoActivity">
 
@@ -15,18 +16,27 @@
         app:popupTheme="@style/Widget.AppCompat.Toolbar">
 
         <Button
-            android:id="@+id/btn_menu"
+            android:id="@+id/btn_delete"
             android:layout_width="30dp"
             android:layout_height="30dp"
             android:layout_gravity="end"
             android:layout_marginEnd="15dp"
-            android:background="@drawable/ic_more_vert_24dp"/>
+            android:background="@drawable/ic_delete_black_24dp"/>
+
+        <Button
+            android:id="@+id/btn_edit"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="end"
+            android:layout_marginEnd="15dp"
+            android:background="@drawable/ic_create_black_24dp"/>
 
         <Button
             android:id="@+id/btn_go_before"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:background="@drawable/ic_arrow_back_24dp"/>
+            android:layout_marginStart="15dp"
+            android:background="@drawable/ic_arrow_back_24dp" />
 
     </androidx.appcompat.widget.Toolbar>
 

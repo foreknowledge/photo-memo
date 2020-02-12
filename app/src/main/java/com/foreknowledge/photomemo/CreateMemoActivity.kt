@@ -1,13 +1,15 @@
 package com.foreknowledge.photomemo
 
+import android.app.AlertDialog
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.GridLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_memo.*
-
 
 class CreateMemoActivity : AppCompatActivity() {
     private val context = this@CreateMemoActivity
@@ -20,8 +22,28 @@ class CreateMemoActivity : AppCompatActivity() {
         images_grid.layoutManager = GridLayoutManager(context, 4)
         images_grid.adapter = ImageListAdapter(context, getSampleImages())
 
-        btn_save_memo.setOnClickListener {  }
         btn_cancel.setOnClickListener { finish() }
+        btn_add_image.setOnClickListener { showMenu() }
+    }
+
+    fun saveMemo(v: View) {
+        if (edit_memo_title.text.toString().isBlank())
+            Snackbar.make(v, "제목은 필수 입력 사항입니다.", Snackbar.LENGTH_SHORT).show()
+
+    }
+
+    private fun showMenu() {
+        val options = resources.getStringArray(R.array.option_add_image)
+
+        AlertDialog.Builder(context)
+            .setTitle(resources.getString(R.string.text_add_image))
+            .setItems(options){ _, i ->
+                when (i) {
+                    0 -> Toast.makeText(context, "사진촬영", Toast.LENGTH_SHORT).show()
+                    1 -> Toast.makeText(context, "갤러리", Toast.LENGTH_SHORT).show()
+                    2 -> Toast.makeText(context, "이미지 url", Toast.LENGTH_SHORT).show()
+                }
+            }.show()
     }
 
     private fun getSampleImages(): List<Bitmap> {
