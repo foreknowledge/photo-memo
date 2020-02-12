@@ -26,8 +26,8 @@ class DetailMemoActivity : AppCompatActivity() {
     private fun showAlertDialog() {
         AlertDialog.Builder(context)
             .setMessage(getString(R.string.delete_message))
-            .setPositiveButton( getString(R.string.btn_ok_text) ) { _, _ -> deleteMemo() }
-            .setNegativeButton( getString(R.string.btn_cancel_text) ) { dialog, _ -> dialog.dismiss() }.show()
+            .setNegativeButton( getString(R.string.btn_ok_text) ) { _, _ -> deleteMemo() }
+            .setPositiveButton( getString(R.string.btn_cancel_text) ) { dialog, _ -> dialog.dismiss() }.show()
     }
 
     private fun deleteMemo() {
