@@ -120,6 +120,8 @@ class CreateMemoActivity : AppCompatActivity() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
+        if (url_input_box.visibility == View.VISIBLE) url_input_box.visibility = View.GONE
+
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CHOOSE_GALLERY_IMAGE && data != null && data.data != null) {
                 imagesAdapter.addImage(tryReadBitmap(data.data!!))
