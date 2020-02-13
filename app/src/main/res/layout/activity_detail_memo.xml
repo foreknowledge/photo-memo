@@ -6,12 +6,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@android:color/white"
     tools:context=".CreateMemoActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="@android:color/white"
         android:padding="10dp"
         app:popupTheme="@style/Widget.AppCompat.Toolbar">
 
@@ -42,40 +42,34 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="10dp"
-                android:background="@color/colorGray1" />
-
             <TextView
                 android:id="@+id/text_memo_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/white"
+                android:text="@string/text_memo_title"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@android:color/black"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
                 android:paddingStart="30dp"
                 android:paddingEnd="30dp" />
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:background="@color/colorGray1" />
-
             <TextView
                 android:id="@+id/text_memo_content"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="200dp"
                 android:gravity="top"
                 android:background="@android:color/white"
+                android:text="@string/text_memo_content"
                 android:textSize="18sp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
