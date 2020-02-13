@@ -6,6 +6,8 @@
     <string name="text_create_memo">새 메모</string>
     <string name="text_save">저장</string>
     <string name="text_cancel">취소</string>
+    <string name="text_adjust">적용</string>
+    <string name="text_hide">숨기기</string>
     <string name="text_memo_title">제목</string>
     <string name="text_memo_content">메모</string>
     <string name="text_add_image">이미지 첨부</string>

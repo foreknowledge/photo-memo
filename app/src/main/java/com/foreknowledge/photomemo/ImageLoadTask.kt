@@ -18,10 +18,9 @@ class ImageLoadTask(private val urlStr: String, private val adapter: ImageListAd
             bitmap
         }
 
-    override fun onPostExecute(bitmap: Bitmap) {
+    override fun onPostExecute(bitmap: Bitmap?) {
         super.onPostExecute(bitmap)
         adapter.addImage(bitmap)
-        adapter.notifyDataSetChanged()
     }
 
 }

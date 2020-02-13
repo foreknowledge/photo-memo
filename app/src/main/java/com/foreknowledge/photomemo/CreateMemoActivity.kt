@@ -2,6 +2,7 @@ package com.foreknowledge.photomemo
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -11,16 +12,17 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import androidx.recyclerview.widget.GridLayoutManager
-import com.foreknowledge.photomemo.ImageListAdapter.Companion.MAX_IMAGE_COUNT
 import com.foreknowledge.photomemo.RequestCode.CHOOSE_CAMERA_IMAGE
 import com.foreknowledge.photomemo.RequestCode.CHOOSE_GALLERY_IMAGE
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_memo.*
+import kotlinx.android.synthetic.main.url_input_box.*
 import java.io.File
 import java.io.InputStream
 import java.text.SimpleDateFormat
@@ -31,9 +33,13 @@ class CreateMemoActivity : AppCompatActivity() {
     private val imagesAdapter = ImageListAdapter(context, mutableListOf())
     private lateinit var file: File
 
+    private lateinit var inputMethodManager: InputMethodManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_memo)
+
+        inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
         images_grid.setHasFixedSize(true)
         images_grid.layoutManager = GridLayoutManager(context, 4)
@@ -41,15 +47,21 @@ class CreateMemoActivity : AppCompatActivity() {
 
         btn_cancel.setOnClickListener { finish() }
         btn_add_image.setOnClickListener { showMenu() }
+
+        setUrlInputBox()
     }
 
     fun saveMemo(v: View) {
+        hideKeyboard()
+
         if (edit_memo_title.text.toString().isBlank())
             Snackbar.make(v, "제목은 필수 입력 사항입니다.", Snackbar.LENGTH_SHORT).show()
 
     }
 
     private fun showMenu() {
+        hideKeyboard()
+
         val options = resources.getStringArray(R.array.option_add_image)
 
         AlertDialog.Builder(context)
@@ -58,7 +70,7 @@ class CreateMemoActivity : AppCompatActivity() {
                 when (i) {
                     0 -> switchToAlbum()
                     1 -> switchToCamera()
-                    2 -> setUrlImage()
+                    2 -> url_input_box.visibility = View.VISIBLE
                 }
             }.show()
     }
@@ -85,10 +97,24 @@ class CreateMemoActivity : AppCompatActivity() {
         return FileProvider.getUriForFile(this, "${packageName}.fileprovider", file)
     }
 
-    private fun setUrlImage() {
-        val urlStr = "https://t1.daumcdn.net/thumb/R720x0/?fname=http://t1.daumcdn.net/brunch/service/user/5xq2/image/w2gbbJ7lwG0quKMZtTihufPuvno.jpg"
+    private fun setUrlInputBox() {
+        btn_hide.setOnClickListener {
+            url_input_box.visibility = View.GONE
+            et_url.text.clear()
 
-        ImageLoadTask(urlStr, imagesAdapter).execute()
+            hideKeyboard()
+        }
+        btn_clear.setOnClickListener { et_url.text.clear() }
+
+        btn_adjust.setOnClickListener {
+            if (et_url.text.toString().isBlank())
+                Toast.makeText(this, "", Toast.LENGTH_SHORT).show()
+            else
+                ImageLoadTask(et_url.text.toString(), imagesAdapter).execute()
+            et_url.text.clear()
+
+            hideKeyboard()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -96,23 +122,14 @@ class CreateMemoActivity : AppCompatActivity() {
 
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CHOOSE_GALLERY_IMAGE && data != null && data.data != null) {
-                imagesAdapter.addBitmapImage(tryReadBitmap(data.data!!))
+                imagesAdapter.addImage(tryReadBitmap(data.data!!))
             } else if (requestCode == CHOOSE_CAMERA_IMAGE) {
-                imagesAdapter.addBitmapImage(decodeFileAndRotate(file.absolutePath))
+                imagesAdapter.addImage(decodeFileAndRotate(file.absolutePath))
             }
         }
     }
 
-    private fun ImageListAdapter.addBitmapImage(bitmap: Bitmap?) {
-        if (bitmap != null) {
-            if (this.addImage(bitmap)) this.notifyDataSetChanged()
-            else Toast.makeText(
-                context,
-                "이미지 첨부는 ${MAX_IMAGE_COUNT}개까지만 가능합니다.",
-                Toast.LENGTH_SHORT
-            ).show()
-        }
-    }
+    private fun hideKeyboard() = inputMethodManager.hideSoftInputFromWindow(et_url.windowToken, 0)
 
     private fun decodeFileAndRotate(filePath: String) = BitmapFactory.decodeFile(filePath)?.getRotateBitmap(filePath)
 

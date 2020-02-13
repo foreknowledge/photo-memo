@@ -5,6 +5,7 @@ import android.graphics.Bitmap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_image.view.*
 
@@ -13,12 +14,13 @@ class ImageListAdapter(private val context: Context, private val images: Mutable
         const val MAX_IMAGE_COUNT = 10
     }
 
-    fun addImage(bitmap: Bitmap): Boolean {
-        if (images.size < MAX_IMAGE_COUNT) {
-            images.add(bitmap)
-            return true
+    fun addImage(bitmap: Bitmap?) {
+        bitmap?.let {
+            if (images.size < MAX_IMAGE_COUNT) {
+                images.add(bitmap)
+                this.notifyDataSetChanged()
+            } else Toast.makeText(context, "이미지 첨부는 ${MAX_IMAGE_COUNT}개까지만 가능합니다.", Toast.LENGTH_SHORT).show()
         }
-        return false
     }
 
     class ImageViewHolder(val view: View): RecyclerView.ViewHolder(view)
