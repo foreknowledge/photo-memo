@@ -17,8 +17,8 @@
     <string name="btn_add_image">+ 추가</string>
 
     <string-array name="option_add_image">
-        <item>사진 촬영하기</item>
         <item>갤러리에서 가져오기</item>
+        <item>카메라로 촬영하기</item>
         <item>외부 이미지 주소로 가져오기</item>
     </string-array>
     <string name="delete_message">메모를 삭제하시겠습니까?</string>

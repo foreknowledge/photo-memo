@@ -56,8 +56,8 @@ class CreateMemoActivity : AppCompatActivity() {
             .setTitle(resources.getString(R.string.text_add_image))
             .setItems(options){ _, i ->
                 when (i) {
-                    0 -> setPicturedImage()
-                    1 -> setGalleryImage()
+                    0 -> setGalleryImage()
+                    1 -> setPicturedImage()
                     2 -> Toast.makeText(context, "이미지 url", Toast.LENGTH_SHORT).show()
                 }
             }.show()
