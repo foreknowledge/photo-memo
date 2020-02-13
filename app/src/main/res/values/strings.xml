@@ -10,6 +10,7 @@
     <string name="text_memo_content">메모</string>
     <string name="text_add_image">이미지 첨부</string>
     <string name="text_image_preview">이미지 미리보기</string>
+    <string name="text_image_url">이미지 url 입력</string>
 
     <string name="text_image_description">썸네일 이미지</string>
     <string name="text_memo_notice">메모를 추가 해 보세요.</string>
