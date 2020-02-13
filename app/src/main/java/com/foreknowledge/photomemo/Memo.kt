@@ -14,7 +14,8 @@ fun getSampleMemo(context: Context): List<Memo> {
 
     val images2 = listOf(
         BitmapFactory.decodeResource(context.resources, R.drawable.travel_sample_03),
-        BitmapFactory.decodeResource(context.resources, R.drawable.travel_sample_04)
+        BitmapFactory.decodeResource(context.resources, R.drawable.travel_sample_04),
+        BitmapFactory.decodeResource(context.resources, R.drawable.travel_sample_05)
     )
 
     return listOf(
