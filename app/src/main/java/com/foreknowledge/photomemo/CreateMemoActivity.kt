@@ -33,11 +33,15 @@ class CreateMemoActivity : AppCompatActivity() {
     private val imagesAdapter = PreviewImageListAdapter(context, mutableListOf())
     private lateinit var file: File
 
+    private var memoId: Long = 0
+
     private lateinit var inputMethodManager: InputMethodManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_memo)
+
+        fillContentIfExists()
 
         inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
@@ -49,6 +53,19 @@ class CreateMemoActivity : AppCompatActivity() {
         btn_add_image.setOnClickListener { showMenu() }
 
         setUrlInputBox()
+    }
+
+    private fun fillContentIfExists() {
+        memoId = intent.getLongExtra("memoId", 0)
+
+        if (memoId != 0L) {
+            val memo = MemoDbTable(this).readMemo(memoId)
+
+            edit_memo_title.setText(memo.title)
+            edit_memo_content.setText(memo.content)
+
+            imagesAdapter.addImages(memo.images)
+        }
     }
 
     fun saveMemo(v: View) {

@@ -17,7 +17,12 @@ class DetailMemoActivity : AppCompatActivity() {
 
         fillContent()
 
-        btn_edit.setOnClickListener { switchTo(context, CreateMemoActivity::class.java) }
+        btn_edit.setOnClickListener {
+            val bundle = Bundle()
+            bundle.putLong("memoId", memoId)
+
+            switchTo(context, CreateMemoActivity::class.java, bundle)
+        }
         btn_delete.setOnClickListener { showAlertDialog() }
         btn_go_before.setOnClickListener { finish() }
     }
@@ -25,14 +30,14 @@ class DetailMemoActivity : AppCompatActivity() {
     private fun fillContent() {
         memoId = intent.getLongExtra("memoId", 0)
 
-        val memoList = MemoDbTable(this).readMemo(memoId)
+        val memo = MemoDbTable(this).readMemo(memoId)
 
-        text_memo_title.text = memoList.title
-        text_memo_content.text = memoList.content
+        text_memo_title.text = memo.title
+        text_memo_content.text = memo.content
 
         image_list.setHasFixedSize(true)
         image_list.layoutManager = LinearLayoutManager(this)
-        image_list.adapter = DetailImageListAdapter(this, memoList.images)
+        image_list.adapter = DetailImageListAdapter(this, memo.images)
     }
 
     private fun showAlertDialog() {

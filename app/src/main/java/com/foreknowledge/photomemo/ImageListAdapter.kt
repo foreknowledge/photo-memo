@@ -23,10 +23,14 @@ class PreviewImageListAdapter(private val context: Context, private val images: 
 
     fun getAllItems() = images
 
-    fun addImage(bitmap: Bitmap?) {
-        bitmap?.let {
+    fun addImages(images: List<Bitmap>) {
+        for (bitmap in images) addImage(bitmap)
+    }
+
+    fun addImage(image: Bitmap?) {
+        image?.let {
             if (images.size < MAX_IMAGE_COUNT) {
-                images.add(bitmap)
+                images.add(image)
                 this.notifyDataSetChanged()
             } else Toast.makeText(context, "이미지 첨부는 ${MAX_IMAGE_COUNT}개까지만 가능합니다.", Toast.LENGTH_SHORT).show()
         }
