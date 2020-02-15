@@ -30,7 +30,7 @@ import java.util.*
 
 class CreateMemoActivity : AppCompatActivity() {
     private val context = this@CreateMemoActivity
-    private val imagesAdapter = ImageListAdapter(context, mutableListOf())
+    private val imagesAdapter = PreviewImageListAdapter(context, mutableListOf())
     private lateinit var file: File
 
     private lateinit var inputMethodManager: InputMethodManager
@@ -57,6 +57,13 @@ class CreateMemoActivity : AppCompatActivity() {
         if (edit_memo_title.text.toString().isBlank())
             Snackbar.make(v, "제목은 필수 입력 사항입니다.", Snackbar.LENGTH_SHORT).show()
 
+        val title = edit_memo_title.text.toString()
+        val content = edit_memo_content.text.toString()
+        val images = imagesAdapter.getAllItems()
+
+        MemoDbTable(this).store(title, content, images)
+        Toast.makeText(this, "저장되었습니다.", Toast.LENGTH_SHORT).show()
+        finish()
     }
 
     private fun showMenu() {

@@ -12,7 +12,7 @@ interface ItemClickListener {
 
 class MemoListAdapter(private val memoList: List<Memo>, private val itemClickListener: ItemClickListener) : RecyclerView.Adapter<MemoListAdapter.MemoViewHolder>() {
 
-    //fun getItem(position: Int) = memoList[position]
+    fun getItem(position: Int) = memoList[position]
 
     open class MemoViewHolder(val view: View): RecyclerView.ViewHolder(view)
 
@@ -29,9 +29,9 @@ class MemoListAdapter(private val memoList: List<Memo>, private val itemClickLis
         holder.view.memo_title.text = memo.title
         holder.view.memo_content.text = memo.content
 
-        if (memo.thumbnail != null && memo.thumbnail.isNotEmpty()) {
-            holder.view.thumbnail_image.setImageBitmap(memo.thumbnail[0])
-            holder.view.num_of_images.text = memo.thumbnail.size.toString()
+        if (memo.images.isNotEmpty()) {
+            holder.view.thumbnail_image.setImageBitmap(memo.images[0])
+            holder.view.num_of_images.text = memo.images.size.toString()
         }
         else
             holder.view.thumbnail_card_view.visibility = View.GONE

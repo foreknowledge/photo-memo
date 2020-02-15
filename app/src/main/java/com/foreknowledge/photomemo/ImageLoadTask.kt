@@ -5,7 +5,7 @@ import android.graphics.BitmapFactory
 import android.os.AsyncTask
 import java.net.URL
 
-class ImageLoadTask(private val urlStr: String, private val adapter: ImageListAdapter) : AsyncTask<Void, Void, Bitmap>() {
+class ImageLoadTask(private val urlStr: String, private val adapter: PreviewImageListAdapter) : AsyncTask<Void, Void, Bitmap>() {
     companion object {
         private val bitmapHash = mutableMapOf<String, Bitmap>()
     }

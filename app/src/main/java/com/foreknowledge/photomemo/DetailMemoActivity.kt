@@ -3,10 +3,13 @@ package com.foreknowledge.photomemo
 import android.app.AlertDialog
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_detail_memo.*
 
 class DetailMemoActivity : AppCompatActivity() {
     private val context = this@DetailMemoActivity
+
+    private var memoId: Long = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,7 +23,16 @@ class DetailMemoActivity : AppCompatActivity() {
     }
 
     private fun fillContent() {
+        memoId = intent.getLongExtra("memoId", 0)
 
+        val memoList = MemoDbTable(this).readMemo(memoId)
+
+        text_memo_title.text = memoList.title
+        text_memo_content.text = memoList.content
+
+        image_list.setHasFixedSize(true)
+        image_list.layoutManager = LinearLayoutManager(this)
+        image_list.adapter = DetailImageListAdapter(this, memoList.images)
     }
 
     private fun showAlertDialog() {
@@ -31,6 +43,7 @@ class DetailMemoActivity : AppCompatActivity() {
     }
 
     private fun deleteMemo() {
+        MemoDbTable(this).remove(memoId)
         finish()
     }
 }
