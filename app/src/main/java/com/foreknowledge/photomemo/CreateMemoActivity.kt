@@ -166,7 +166,7 @@ class CreateMemoActivity : AppCompatActivity() {
 
     private fun getImageFilePath(filePath: String): String {
         val bitmap = BitmapFactory.decodeFile(filePath)?.getRotateBitmap(filePath)
-        return bitmapToImageFile(context, bitmap)
+        return bitmapToImageFile(context, bitmap, filePath)
     }
 
     private fun getImageFilePath(data: Uri): String {

@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.android.synthetic.main.item_image_preview.view.*
+import java.io.File
 
 class DetailImageListAdapter(context: Context, private val imagePaths: List<String>) : ImageListAdapter(context, imagePaths, R.layout.item_image) {
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
@@ -37,6 +38,7 @@ class PreviewImageListAdapter(private val context: Context, private val imagePat
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.view.image_preview.setImageBitmap(BitmapFactory.decodeFile(imagePaths[position]))
         holder.view.image_delete.setOnClickListener {
+            File(imagePaths[position]).delete()
             imagePaths.removeAt(position)
             notifyDataSetChanged()
         }
