@@ -39,9 +39,8 @@ class DetailMemoActivity : AppCompatActivity() {
         text_memo_title.text = memo.title
         text_memo_content.text = memo.content
 
-        image_list.setHasFixedSize(true)
         image_list.layoutManager = LinearLayoutManager(this)
-        image_list.adapter = DetailImageListAdapter(this, memo.images)
+        image_list.adapter = DetailImageListAdapter(this, memo.imagePaths)
     }
 
     private fun showAlertDialog() {

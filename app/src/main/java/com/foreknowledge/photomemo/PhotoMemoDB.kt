@@ -18,7 +18,7 @@ class PhotoMemoDB(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, nu
         private const val SQL_CREATE_IMAGE_ENTRIES = "CREATE TABLE IF NOT EXISTS ${ImageEntry.TABLE_NAME} (" +
                 "${ImageEntry._ID} INTEGER PRIMARY KEY, " +
                 "${ImageEntry.MEMO_ID} INTEGER NOT NULL, " +
-                "${ImageEntry.IMAGE_COL} BLOB NOT NULL " +
+                "${ImageEntry.IMAGE_PATH_COL} TEXT NOT NULL " +
                 ")"
 
         private const val SQL_DELETE_IMAGE_ENTRIES = "DROP TABLE IF EXISTS ${ImageEntry.TABLE_NAME}"

@@ -18,5 +18,5 @@ object ImageEntry: BaseColumns {
 
     const val _ID = "id"
     const val MEMO_ID = "memo_id"
-    const val IMAGE_COL = "image"
+    const val IMAGE_PATH_COL = "image_path"
 }

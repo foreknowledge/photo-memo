@@ -24,7 +24,6 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_memo.*
 import kotlinx.android.synthetic.main.url_input_box.*
 import java.io.File
-import java.io.InputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -64,7 +63,7 @@ class CreateMemoActivity : AppCompatActivity() {
             edit_memo_title.setText(memo.title)
             edit_memo_content.setText(memo.content)
 
-            imagesAdapter.addImages(memo.images)
+            imagesAdapter.addImagePaths(memo.imagePaths)
         }
     }
 
@@ -140,7 +139,7 @@ class CreateMemoActivity : AppCompatActivity() {
             if (et_url.text.toString().isBlank())
                 Toast.makeText(this, "", Toast.LENGTH_SHORT).show()
             else
-                ImageLoadTask(et_url.text.toString(), imagesAdapter).execute()
+                ImageLoadTask(this, et_url.text.toString(), imagesAdapter).execute()
             et_url.text.clear()
 
             hideKeyboard()
@@ -154,23 +153,31 @@ class CreateMemoActivity : AppCompatActivity() {
 
         if (resultCode == Activity.RESULT_OK) {
             if (requestCode == CHOOSE_GALLERY_IMAGE && data != null && data.data != null) {
-                imagesAdapter.addImage(tryReadBitmap(data.data!!))
+                imagesAdapter.addImagePath(getImageFilePath(data.data!!))
             } else if (requestCode == CHOOSE_CAMERA_IMAGE) {
-                imagesAdapter.addImage(decodeFileAndRotate(file.absolutePath))
+                imagesAdapter.addImagePath(getImageFilePath(file.absolutePath))
             }
         }
     }
 
     private fun hideKeyboard() = inputMethodManager.hideSoftInputFromWindow(et_url.windowToken, 0)
 
-    private fun decodeFileAndRotate(filePath: String) = BitmapFactory.decodeFile(filePath)?.getRotateBitmap(filePath)
+    private fun getImageFilePath(filePath: String): String {
+        val bitmap = BitmapFactory.decodeFile(filePath)?.getRotateBitmap(filePath)
+        return bitmapToImageFile(context, bitmap)
+    }
 
-    private fun tryReadBitmap(data: Uri): Bitmap? {
-        val inputStream: InputStream? = contentResolver.openInputStream(data)
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        inputStream?.close()
-
-        return bitmap
+    private fun getImageFilePath(data: Uri): String {
+        data.path?.let {
+            contentResolver.query(data, null, null, null, null)
+                .use {
+                    it?.let{
+                        it.moveToNext()
+                        return it.getString(it.getColumnIndex("_data"))
+                    }
+                }
+        }
+        return ""
     }
 
     private fun Bitmap.getRotateBitmap(photoPath: String): Bitmap {

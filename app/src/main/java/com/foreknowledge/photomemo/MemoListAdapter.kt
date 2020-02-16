@@ -1,5 +1,6 @@
 package com.foreknowledge.photomemo
 
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,9 +30,9 @@ class MemoListAdapter(private val memoList: List<Memo>, private val itemClickLis
         holder.view.memo_title.text = memo.title
         holder.view.memo_content.text = memo.content
 
-        if (memo.images.isNotEmpty()) {
-            holder.view.thumbnail_image.setImageBitmap(memo.images[0])
-            holder.view.num_of_images.text = memo.images.size.toString()
+        if (memo.imagePaths.isNotEmpty()) {
+            holder.view.thumbnail_image.setImageBitmap(BitmapFactory.decodeFile(memo.imagePaths[0]))
+            holder.view.num_of_images.text = memo.imagePaths.size.toString()
         }
         else
             holder.view.thumbnail_card_view.visibility = View.GONE

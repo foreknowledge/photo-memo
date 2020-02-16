@@ -4,15 +4,12 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import java.io.ByteArrayOutputStream
 
 class MemoDbTable(context: Context) {
 
     private val dbHelper = PhotoMemoDB(context)
 
-    fun store(title: String, content: String, images: List<Bitmap>) {
+    fun store(title: String, content: String, imagePaths: List<String>) {
         dbHelper.writableDatabase
             .use {
                 val memoValues = ContentValues()
@@ -24,11 +21,11 @@ class MemoDbTable(context: Context) {
                 it.transaction {
                     val memoId = insert(MemoEntry.TABLE_NAME, null, memoValues)
 
-                    for (image in images) {
+                    for (imagePath in imagePaths) {
                         val imageValues = ContentValues()
                         with(imageValues) {
                             put(ImageEntry.MEMO_ID, memoId)
-                            put(ImageEntry.IMAGE_COL, toByteArray(image))
+                            put(ImageEntry.IMAGE_PATH_COL, imagePath)
                         }
 
                         insert(ImageEntry.TABLE_NAME, null, imageValues)
@@ -52,11 +49,11 @@ class MemoDbTable(context: Context) {
 
                     delete(ImageEntry.TABLE_NAME, "${ImageEntry.MEMO_ID} = ${memo.id}", null)
 
-                    for (image in memo.images) {
+                    for (imagePath in memo.imagePaths) {
                         val imageValues = ContentValues()
                         with(imageValues) {
                             put(ImageEntry.MEMO_ID, memo.id)
-                            put(ImageEntry.IMAGE_COL, toByteArray(image))
+                            put(ImageEntry.IMAGE_PATH_COL, imagePath)
                         }
 
                         insert(ImageEntry.TABLE_NAME, null, imageValues)
@@ -89,17 +86,17 @@ class MemoDbTable(context: Context) {
                     val memoId = memoCursor.getLong(MemoEntry._ID)
                     val title = memoCursor.getString(MemoEntry.TITLE_COL)
                     val content = memoCursor.getString(MemoEntry.CONTENT_COL)
-                    val images: MutableList<Bitmap> = mutableListOf()
+                    val imagePaths: MutableList<String> = mutableListOf()
 
-                    columns = arrayOf(ImageEntry.MEMO_ID, ImageEntry.IMAGE_COL)
+                    columns = arrayOf(ImageEntry.MEMO_ID, ImageEntry.IMAGE_PATH_COL)
                     val selection = "${ImageEntry.MEMO_ID} = $memoId"
                     order = "${ImageEntry._ID} ASC"
 
                     val imageCursor = it.doQuery(ImageEntry.TABLE_NAME, columns, selection = selection, orderBy = order)
                     while (imageCursor.moveToNext())
-                        images.add(imageCursor.getBlob(ImageEntry.IMAGE_COL))
+                        imagePaths.add(imageCursor.getString(ImageEntry.IMAGE_PATH_COL))
 
-                    memoList.add(Memo(memoId, title, content, images))
+                    memoList.add(Memo(memoId, title, content, imagePaths))
                     imageCursor.close()
                 }
 
@@ -125,26 +122,20 @@ class MemoDbTable(context: Context) {
                 memoCursor.close()
 
 
-                val images: MutableList<Bitmap> = mutableListOf()
+                val imagePaths: MutableList<String> = mutableListOf()
 
-                columns = arrayOf(ImageEntry.MEMO_ID, ImageEntry.IMAGE_COL)
+                columns = arrayOf(ImageEntry.MEMO_ID, ImageEntry.IMAGE_PATH_COL)
                 selection = "${ImageEntry.MEMO_ID} = $memoId"
                 order = "${ImageEntry._ID} ASC"
 
                 val imageCursor = it.doQuery(ImageEntry.TABLE_NAME, columns, selection = selection, orderBy = order)
                 while (imageCursor.moveToNext())
-                    images.add(imageCursor.getBlob(ImageEntry.IMAGE_COL))
+                    imagePaths.add(imageCursor.getString(ImageEntry.IMAGE_PATH_COL))
 
                 imageCursor.close()
 
-                return Memo(memoId, title, content, images)
+                return Memo(memoId, title, content, imagePaths)
             }
-    }
-
-    private fun toByteArray(bitmap: Bitmap): ByteArray {
-        val stream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream)
-        return stream.toByteArray()
     }
 }
 
@@ -156,11 +147,6 @@ private fun SQLiteDatabase.doQuery(table: String, columns: Array<String>, select
 
 private fun Cursor.getLong(columnName: String) = getLong(getColumnIndex(columnName))
 private fun Cursor.getString(columnName: String) = getString(getColumnIndex(columnName))
-
-private fun Cursor.getBlob(columnName: String): Bitmap {
-    val bytes = getBlob(getColumnIndex(columnName))
-    return BitmapFactory.decodeByteArray(bytes, 0, bytes.size)
-}
 
 private inline fun <T> SQLiteDatabase.transaction(function: SQLiteDatabase.() -> T): T {
     beginTransaction()
