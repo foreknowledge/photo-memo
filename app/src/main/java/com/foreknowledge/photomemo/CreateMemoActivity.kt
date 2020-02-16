@@ -70,8 +70,10 @@ class CreateMemoActivity : AppCompatActivity() {
     fun saveMemo(v: View) {
         hideKeyboard()
 
-        if (edit_memo_title.text.toString().trim().isBlank())
+        if (edit_memo_title.text.toString().trim().isBlank()) {
             Snackbar.make(v, "제목은 필수 입력 사항입니다.", Snackbar.LENGTH_SHORT).show()
+            return
+        }
 
         val title = edit_memo_title.text.toString()
         val content = edit_memo_content.text.toString()

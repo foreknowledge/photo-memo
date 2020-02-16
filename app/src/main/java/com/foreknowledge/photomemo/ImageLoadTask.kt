@@ -33,21 +33,17 @@ class ImageLoadTask(private val context: Context, private val urlStr: String, pr
 }
 
 fun bitmapToImageFile(context: Context, bitmap: Bitmap?): String {
-    bitmap?.let {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val fileName = "JPEG_${timeStamp}.jpg"
+    if (bitmap == null) return ""
 
-        val imageFile = File(storageDir, fileName)
+    val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+    val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+    val imageFile = File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
 
-        FileOutputStream(imageFile)
-            .use {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
-                it.flush()
+    FileOutputStream(imageFile)
+        .use {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
+            it.flush()
 
-                return fileName
-            }
-    }
-
-    return ""
+            return imageFile.absolutePath
+        }
 }
