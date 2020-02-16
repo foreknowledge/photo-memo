@@ -15,8 +15,6 @@ class DetailMemoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_detail_memo)
 
-        fillContent()
-
         btn_edit.setOnClickListener {
             val bundle = Bundle()
             bundle.putLong("memoId", memoId)
@@ -25,6 +23,12 @@ class DetailMemoActivity : AppCompatActivity() {
         }
         btn_delete.setOnClickListener { showAlertDialog() }
         btn_go_before.setOnClickListener { finish() }
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        fillContent()
     }
 
     private fun fillContent() {

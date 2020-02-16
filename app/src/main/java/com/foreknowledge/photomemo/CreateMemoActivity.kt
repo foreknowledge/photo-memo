@@ -71,15 +71,21 @@ class CreateMemoActivity : AppCompatActivity() {
     fun saveMemo(v: View) {
         hideKeyboard()
 
-        if (edit_memo_title.text.toString().isBlank())
+        if (edit_memo_title.text.toString().trim().isBlank())
             Snackbar.make(v, "제목은 필수 입력 사항입니다.", Snackbar.LENGTH_SHORT).show()
 
         val title = edit_memo_title.text.toString()
         val content = edit_memo_content.text.toString()
         val images = imagesAdapter.getAllItems()
 
-        MemoDbTable(this).store(title, content, images)
-        Toast.makeText(this, "저장되었습니다.", Toast.LENGTH_SHORT).show()
+        if (memoId != 0L) {
+            MemoDbTable(this).update(Memo(memoId, title, content, images))
+            Toast.makeText(this, "편집되었습니다.", Toast.LENGTH_SHORT).show()
+        }
+        else {
+            MemoDbTable(this).store(title, content, images)
+            Toast.makeText(this, "저장되었습니다.", Toast.LENGTH_SHORT).show()
+        }
         finish()
     }
 

@@ -37,6 +37,32 @@ class MemoDbTable(context: Context) {
             }
     }
 
+    fun update(memo: Memo) {
+        dbHelper.writableDatabase
+            .use {
+                val memoValues = ContentValues()
+                with(memoValues) {
+                    put(MemoEntry._ID, memo.id)
+                    put(MemoEntry.TITLE_COL, memo.title)
+                    put(MemoEntry.CONTENT_COL, memo.content)
+                }
+
+                it.transaction {
+                    update(MemoEntry.TABLE_NAME, memoValues, "${MemoEntry._ID} = ${memo.id}", null)
+
+                    for (image in memo.images) {
+                        val imageValues = ContentValues()
+                        with(imageValues) {
+                            put(ImageEntry.MEMO_ID, memo.id)
+                            put(ImageEntry.IMAGE_COL, toByteArray(image))
+                        }
+
+                        update(ImageEntry.TABLE_NAME, imageValues, "${ImageEntry.MEMO_ID} = ${memo.id}", null)
+                    }
+                }
+            }
+    }
+
     fun remove(memoId: Long) {
         dbHelper.writableDatabase
             .use {
@@ -71,7 +97,7 @@ class MemoDbTable(context: Context) {
                     while (imageCursor.moveToNext())
                         images.add(imageCursor.getBlob(ImageEntry.IMAGE_COL))
 
-                    memoList.add(Memo(memoId, title, content))
+                    memoList.add(Memo(memoId, title, content, images))
                     imageCursor.close()
                 }
 
