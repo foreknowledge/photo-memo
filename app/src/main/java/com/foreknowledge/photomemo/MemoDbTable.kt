@@ -50,6 +50,8 @@ class MemoDbTable(context: Context) {
                 it.transaction {
                     update(MemoEntry.TABLE_NAME, memoValues, "${MemoEntry._ID} = ${memo.id}", null)
 
+                    delete(ImageEntry.TABLE_NAME, "${ImageEntry.MEMO_ID} = ${memo.id}", null)
+
                     for (image in memo.images) {
                         val imageValues = ContentValues()
                         with(imageValues) {
@@ -57,7 +59,7 @@ class MemoDbTable(context: Context) {
                             put(ImageEntry.IMAGE_COL, toByteArray(image))
                         }
 
-                        update(ImageEntry.TABLE_NAME, imageValues, "${ImageEntry.MEMO_ID} = ${memo.id}", null)
+                        insert(ImageEntry.TABLE_NAME, null, imageValues)
                     }
                 }
             }
