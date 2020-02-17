@@ -4,9 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Matrix
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -16,7 +14,6 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
-import androidx.exifinterface.media.ExifInterface
 import androidx.recyclerview.widget.GridLayoutManager
 import com.foreknowledge.photomemo.PreviewImageListAdapter.Companion.MAX_IMAGE_COUNT
 import com.foreknowledge.photomemo.RequestCode.CHOOSE_CAMERA_IMAGE
@@ -49,10 +46,21 @@ class CreateMemoActivity : AppCompatActivity() {
         images_grid.layoutManager = GridLayoutManager(context, 4)
         images_grid.adapter = imagesAdapter
 
-        btn_cancel.setOnClickListener { finish() }
+        btn_cancel.setOnClickListener { goBack() }
         btn_add_image.setOnClickListener { showMenu() }
 
         setUrlInputBox()
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        goBack()
+    }
+
+    private fun goBack() {
+        imagesAdapter.undo()
+        finish()
     }
 
     private fun fillContentIfExists() {
@@ -169,16 +177,11 @@ class CreateMemoActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        imagesAdapter.undo()
-    }
-
     private fun hideKeyboard() = inputMethodManager.hideSoftInputFromWindow(et_url.windowToken, 0)
 
     private fun getImageFilePath(filePath: String): String {
-        val bitmap = BitmapFactory.decodeFile(filePath)?.getRotateBitmap(filePath)
-        return BitmapHelper.bitmapToImageFile(context, bitmap, filePath)
+        val bitmap = BitmapFactory.decodeFile(filePath)
+        return BitmapHelper.rotateAndCompressBitmap(bitmap, filePath)
     }
 
     private fun getImageFilePath(data: Uri): String {
@@ -192,26 +195,5 @@ class CreateMemoActivity : AppCompatActivity() {
                 }
         }
         return ""
-    }
-
-    private fun Bitmap.getRotateBitmap(photoPath: String): Bitmap {
-        val exifInterface = ExifInterface(photoPath)
-        val orientation: Int = exifInterface.getAttributeInt(
-            ExifInterface.TAG_ORIENTATION,
-            ExifInterface.ORIENTATION_UNDEFINED
-        )
-
-        return when (orientation) {
-            ExifInterface.ORIENTATION_ROTATE_90 -> this.rotateImage(90f)
-            ExifInterface.ORIENTATION_ROTATE_180 -> this.rotateImage(180f)
-            ExifInterface.ORIENTATION_ROTATE_270 -> this.rotateImage(270f)
-            else -> this
-        }
-    }
-
-    private fun Bitmap.rotateImage(angle: Float): Bitmap {
-        val matrix = Matrix()
-        matrix.postRotate(angle)
-        return Bitmap.createBitmap(this, 0, 0, this.width, this.height, matrix, true)
     }
 }
