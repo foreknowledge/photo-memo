@@ -50,7 +50,7 @@ object BitmapHelper {
 
     fun rotateAndCompressImage(filePath: String): String {
         val options = BitmapFactory.Options()
-        if (File(filePath).length()/1024 > 1000000)
+        if (File(filePath).length() > 1000000)
             options.inSampleSize = 2
 
         val rotatedBitmap = BitmapFactory.decodeFile(filePath, options).getRotateBitmap(filePath)
