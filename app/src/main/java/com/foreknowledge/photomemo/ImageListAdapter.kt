@@ -9,7 +9,6 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.android.synthetic.main.item_image_preview.view.*
-import java.io.File
 
 class DetailImageListAdapter(context: Context, private val imagePaths: List<String>) : ImageListAdapter(context, imagePaths, R.layout.item_image) {
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
@@ -20,16 +19,37 @@ class DetailImageListAdapter(context: Context, private val imagePaths: List<Stri
 class PreviewImageListAdapter(private val context: Context, private val imagePaths: MutableList<String>) : ImageListAdapter(context, imagePaths, R.layout.item_image_preview) {
     companion object {
         const val MAX_IMAGE_COUNT = 10
+
+        const val ADD_IMAGE = 1
+        const val DELETE_IMAGE = -1
     }
 
-    fun getAllItems() = imagePaths
+    data class ImageHistory(val type: Int, val imagePath: String)
 
-    fun addImagePaths(imagePaths: List<String>) {
-        for (path in imagePaths) addImagePath(path)
+    private val originalImgPaths = imagePaths.toMutableList()
+    private val history = mutableListOf<ImageHistory>()
+
+    fun reflect() : List<String> {
+        for (action in history)
+            when (action.type) {
+                DELETE_IMAGE -> FileHelper.deleteFile(action.imagePath)
+            }
+
+        return imagePaths
+    }
+
+    fun undo(): List<String> {
+        for (action in history)
+            when (action.type) {
+                ADD_IMAGE -> FileHelper.deleteFile(action.imagePath)
+            }
+
+        return originalImgPaths
     }
 
     fun addImagePath(imagePath: String) {
         if (imagePaths.size < MAX_IMAGE_COUNT) {
+            history.add(ImageHistory(ADD_IMAGE, imagePath))
             imagePaths.add(imagePath)
             this.notifyDataSetChanged()
         } else Toast.makeText(context, "이미지 첨부는 ${MAX_IMAGE_COUNT}개까지만 가능합니다.", Toast.LENGTH_SHORT).show()
@@ -38,7 +58,7 @@ class PreviewImageListAdapter(private val context: Context, private val imagePat
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.view.image_preview.setImageBitmap(BitmapFactory.decodeFile(imagePaths[position]))
         holder.view.image_delete.setOnClickListener {
-            File(imagePaths[position]).delete()
+            history.add(ImageHistory(DELETE_IMAGE, imagePaths[position]))
             imagePaths.removeAt(position)
             notifyDataSetChanged()
         }

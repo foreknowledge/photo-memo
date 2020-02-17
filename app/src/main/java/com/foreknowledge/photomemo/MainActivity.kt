@@ -1,7 +1,5 @@
 package com.foreknowledge.photomemo
 
-import android.content.Context
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -57,18 +55,4 @@ class MainActivity : AppCompatActivity(), AutoPermissionsListener {
     override fun onGranted(requestCode: Int, permissions: Array<String>) {
         Log.d(tag,"permissions granted : ${permissions.size}")
     }
-}
-
-object RequestCode {
-    const val PERMISSION_REQUEST_CODE = 100
-    const val CHOOSE_CAMERA_IMAGE = 101
-    const val CHOOSE_GALLERY_IMAGE = 102
-
-}
-
-fun switchTo(context: Context, activity: Class<*>, bundle: Bundle? = null) {
-    val intent = Intent(context, activity)
-    bundle?.let{ intent.putExtras(bundle) }
-
-    context.startActivity(intent)
 }

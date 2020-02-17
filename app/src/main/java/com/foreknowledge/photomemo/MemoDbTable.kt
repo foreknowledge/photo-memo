@@ -63,12 +63,15 @@ class MemoDbTable(context: Context) {
     }
 
     fun remove(memoId: Long) {
+        val imagePaths = readMemo(memoId).imagePaths
+
         dbHelper.writableDatabase
             .use {
                 it.transaction {
                     delete(MemoEntry.TABLE_NAME, "${MemoEntry._ID} = $memoId", null)
-
                     delete(ImageEntry.TABLE_NAME, "${ImageEntry.MEMO_ID} = $memoId", null)
+
+                    FileHelper.deleteFiles(imagePaths)
                 }
             }
     }
@@ -137,29 +140,29 @@ class MemoDbTable(context: Context) {
                 return Memo(memoId, title, content, imagePaths)
             }
     }
-}
 
-private fun SQLiteDatabase.doQuery(table: String, columns: Array<String>, selection: String? = null
-                                   , selectionArgs: Array<String>? = null, groupBy: String? = null
-                                   , having: String? = null, orderBy: String? = null): Cursor {
-    return this.query(table, columns, selection, selectionArgs, groupBy, having, orderBy)
-}
-
-private fun Cursor.getLong(columnName: String) = getLong(getColumnIndex(columnName))
-private fun Cursor.getString(columnName: String) = getString(getColumnIndex(columnName))
-
-private inline fun <T> SQLiteDatabase.transaction(function: SQLiteDatabase.() -> T): T {
-    beginTransaction()
-
-    val id = try {
-        val returnValue = function()
-        setTransactionSuccessful()
-
-        returnValue
-    } finally {
-        endTransaction()
+    private fun SQLiteDatabase.doQuery(table: String, columns: Array<String>, selection: String? = null
+                               , selectionArgs: Array<String>? = null, groupBy: String? = null
+                               , having: String? = null, orderBy: String? = null): Cursor {
+        return this.query(table, columns, selection, selectionArgs, groupBy, having, orderBy)
     }
-    close()
 
-    return id
+    private fun Cursor.getLong(columnName: String) = getLong(getColumnIndex(columnName))
+    private fun Cursor.getString(columnName: String) = getString(getColumnIndex(columnName))
+
+    private inline fun <T> SQLiteDatabase.transaction(function: SQLiteDatabase.() -> T): T {
+        beginTransaction()
+
+        val id = try {
+            val returnValue = function()
+            setTransactionSuccessful()
+
+            returnValue
+        } finally {
+            endTransaction()
+        }
+        close()
+
+        return id
+    }
 }

@@ -29,12 +29,12 @@ import java.util.*
 
 class CreateMemoActivity : AppCompatActivity() {
     private val context = this@CreateMemoActivity
-    private val imagesAdapter = PreviewImageListAdapter(context, mutableListOf())
+
+    private lateinit var imagesAdapter: PreviewImageListAdapter
+    private lateinit var inputMethodManager: InputMethodManager
     private lateinit var file: File
 
     private var memoId: Long = 0
-
-    private lateinit var inputMethodManager: InputMethodManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,7 +48,10 @@ class CreateMemoActivity : AppCompatActivity() {
         images_grid.layoutManager = GridLayoutManager(context, 4)
         images_grid.adapter = imagesAdapter
 
-        btn_cancel.setOnClickListener { finish() }
+        btn_cancel.setOnClickListener {
+            imagesAdapter.undo()
+            finish()
+        }
         btn_add_image.setOnClickListener { showMenu() }
 
         setUrlInputBox()
@@ -57,14 +60,16 @@ class CreateMemoActivity : AppCompatActivity() {
     private fun fillContentIfExists() {
         memoId = intent.getLongExtra("memoId", 0)
 
-        if (memoId != 0L) {
-            val memo = MemoDbTable(this).readMemo(memoId)
+        imagesAdapter =
+            if (memoId != 0L) {
+                val memo = MemoDbTable(this).readMemo(memoId)
 
-            edit_memo_title.setText(memo.title)
-            edit_memo_content.setText(memo.content)
+                edit_memo_title.setText(memo.title)
+                edit_memo_content.setText(memo.content)
 
-            imagesAdapter.addImagePaths(memo.imagePaths)
-        }
+                PreviewImageListAdapter(context, memo.imagePaths.toMutableList())
+            } else
+                PreviewImageListAdapter(context, mutableListOf())
     }
 
     fun saveMemo(v: View) {
@@ -77,7 +82,7 @@ class CreateMemoActivity : AppCompatActivity() {
 
         val title = edit_memo_title.text.toString()
         val content = edit_memo_content.text.toString()
-        val images = imagesAdapter.getAllItems()
+        val images = imagesAdapter.reflect()
 
         if (memoId != 0L) {
             MemoDbTable(this).update(Memo(memoId, title, content, images))
@@ -166,7 +171,7 @@ class CreateMemoActivity : AppCompatActivity() {
 
     private fun getImageFilePath(filePath: String): String {
         val bitmap = BitmapFactory.decodeFile(filePath)?.getRotateBitmap(filePath)
-        return bitmapToImageFile(context, bitmap, filePath)
+        return BitmapHelper.bitmapToImageFile(context, bitmap, filePath)
     }
 
     private fun getImageFilePath(data: Uri): String {
