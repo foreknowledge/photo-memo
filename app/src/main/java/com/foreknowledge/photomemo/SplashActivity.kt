@@ -12,7 +12,7 @@ class SplashActivity : AppCompatActivity() {
         Handler().postDelayed({
             switchTo(this, MainActivity::class.java)
             finish()
-        }, 1000)
+        }, 800)
 
     }
 }

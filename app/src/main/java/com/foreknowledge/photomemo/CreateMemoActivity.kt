@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.exifinterface.media.ExifInterface
 import androidx.recyclerview.widget.GridLayoutManager
+import com.foreknowledge.photomemo.PreviewImageListAdapter.Companion.MAX_IMAGE_COUNT
 import com.foreknowledge.photomemo.RequestCode.CHOOSE_CAMERA_IMAGE
 import com.foreknowledge.photomemo.RequestCode.CHOOSE_GALLERY_IMAGE
 import com.google.android.material.snackbar.Snackbar
@@ -48,10 +49,7 @@ class CreateMemoActivity : AppCompatActivity() {
         images_grid.layoutManager = GridLayoutManager(context, 4)
         images_grid.adapter = imagesAdapter
 
-        btn_cancel.setOnClickListener {
-            imagesAdapter.undo()
-            finish()
-        }
+        btn_cancel.setOnClickListener { finish() }
         btn_add_image.setOnClickListener { showMenu() }
 
         setUrlInputBox()
@@ -97,6 +95,11 @@ class CreateMemoActivity : AppCompatActivity() {
 
     private fun showMenu() {
         hideKeyboard()
+
+        if (imagesAdapter.isFull()) {
+            Toast.makeText(this, "이미지 첨부는 ${MAX_IMAGE_COUNT}개까지만 가능합니다.", Toast.LENGTH_SHORT).show()
+            return
+        }
 
         val options = resources.getStringArray(R.array.option_add_image)
 
@@ -159,12 +162,16 @@ class CreateMemoActivity : AppCompatActivity() {
         if (url_input_box.visibility == View.VISIBLE) url_input_box.visibility = View.GONE
 
         if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == CHOOSE_GALLERY_IMAGE && data != null && data.data != null) {
+            if (requestCode == CHOOSE_GALLERY_IMAGE && data != null && data.data != null)
                 imagesAdapter.addImagePath(getImageFilePath(data.data!!))
-            } else if (requestCode == CHOOSE_CAMERA_IMAGE) {
+            else if (requestCode == CHOOSE_CAMERA_IMAGE)
                 imagesAdapter.addImagePath(getImageFilePath(file.absolutePath))
-            }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        imagesAdapter.undo()
     }
 
     private fun hideKeyboard() = inputMethodManager.hideSoftInputFromWindow(et_url.windowToken, 0)

@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.android.synthetic.main.item_image_preview.view.*
@@ -16,7 +15,7 @@ class DetailImageListAdapter(context: Context, private val imagePaths: List<Stri
     }
 }
 
-class PreviewImageListAdapter(private val context: Context, private val imagePaths: MutableList<String>) : ImageListAdapter(context, imagePaths, R.layout.item_image_preview) {
+class PreviewImageListAdapter(context: Context, private val imagePaths: MutableList<String>) : ImageListAdapter(context, imagePaths, R.layout.item_image_preview) {
     companion object {
         const val MAX_IMAGE_COUNT = 10
 
@@ -48,12 +47,12 @@ class PreviewImageListAdapter(private val context: Context, private val imagePat
     }
 
     fun addImagePath(imagePath: String) {
-        if (imagePaths.size < MAX_IMAGE_COUNT) {
-            history.add(ImageHistory(ADD_IMAGE, imagePath))
-            imagePaths.add(imagePath)
-            this.notifyDataSetChanged()
-        } else Toast.makeText(context, "이미지 첨부는 ${MAX_IMAGE_COUNT}개까지만 가능합니다.", Toast.LENGTH_SHORT).show()
+        history.add(ImageHistory(ADD_IMAGE, imagePath))
+        imagePaths.add(imagePath)
+        this.notifyDataSetChanged()
     }
+
+    fun isFull() = imagePaths.size == MAX_IMAGE_COUNT
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.view.image_preview.setImageBitmap(BitmapFactory.decodeFile(imagePaths[position]))
