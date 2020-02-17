@@ -27,6 +27,12 @@ fun switchTo(context: Context, activity: Class<*>, bundle: Bundle? = null) {
 }
 
 object FileHelper {
+    fun createJpgFile(context: Context): File {
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+        val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
+    }
+
     fun deleteFile(filePath: String) = File(filePath).delete()
 
     fun deleteFiles(filePaths: List<String>) {
@@ -37,16 +43,15 @@ object FileHelper {
 
 object BitmapHelper {
     fun bitmapToImageFile(context: Context, bitmap: Bitmap): String {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        val imageFile = File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
+        val imageFile = FileHelper.createJpgFile(context)
 
         return compressBitmapToImageFile(imageFile.absolutePath, bitmap)
     }
 
     fun rotateAndCompressImage(filePath: String): String {
         val options = BitmapFactory.Options()
-        options.inSampleSize = 2
+        if (File(filePath).length()/1024 > 1000000)
+            options.inSampleSize = 2
 
         val rotatedBitmap = BitmapFactory.decodeFile(filePath, options).getRotateBitmap(filePath)
 

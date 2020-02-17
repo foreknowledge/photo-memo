@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
@@ -21,8 +20,6 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_memo.*
 import kotlinx.android.synthetic.main.url_input_box.*
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 
 class CreateMemoActivity : AppCompatActivity() {
     private val context = this@CreateMemoActivity
@@ -129,18 +126,13 @@ class CreateMemoActivity : AppCompatActivity() {
     }
 
     private fun switchToCamera() {
+        file = FileHelper.createJpgFile(this)
+        val uri = FileProvider.getUriForFile(this, "${packageName}.fileprovider", file)
+
         val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        intent.putExtra(MediaStore.EXTRA_OUTPUT, createUri())
+        intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
 
         startActivityForResult(intent, CHOOSE_CAMERA_IMAGE)
-    }
-
-    private fun createUri(): Uri {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        file = File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
-
-        return FileProvider.getUriForFile(this, "${packageName}.fileprovider", file)
     }
 
     private fun setUrlInputBox() {
@@ -169,10 +161,14 @@ class CreateMemoActivity : AppCompatActivity() {
         if (url_input_box.visibility == View.VISIBLE) url_input_box.visibility = View.GONE
 
         if (resultCode == Activity.RESULT_OK) {
+            var resultImgPath = ""
+
             if (requestCode == CHOOSE_GALLERY_IMAGE && data != null && data.data != null)
-                imagesAdapter.addImagePath(getImageFilePath(data.data!!))
+                resultImgPath = getImageFilePath(data.data!!)
             else if (requestCode == CHOOSE_CAMERA_IMAGE)
-                imagesAdapter.addImagePath(BitmapHelper.rotateAndCompressImage(file.absolutePath))
+                resultImgPath = file.absolutePath
+
+            imagesAdapter.addImagePath(BitmapHelper.rotateAndCompressImage(resultImgPath))
         }
     }
 
@@ -184,10 +180,18 @@ class CreateMemoActivity : AppCompatActivity() {
                 .use {
                     it?.let{
                         it.moveToNext()
-                        return it.getString(it.getColumnIndex("_data"))
+
+                        return copyImage(it.getString(it.getColumnIndex("_data")))
                     }
                 }
         }
         return ""
+    }
+
+    private fun copyImage(originalFilePath: String): String {
+        val newFile = FileHelper.createJpgFile(this)
+        File(originalFilePath).copyTo(newFile, true)
+
+        return newFile.absolutePath
     }
 }
