@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -173,16 +172,11 @@ class CreateMemoActivity : AppCompatActivity() {
             if (requestCode == CHOOSE_GALLERY_IMAGE && data != null && data.data != null)
                 imagesAdapter.addImagePath(getImageFilePath(data.data!!))
             else if (requestCode == CHOOSE_CAMERA_IMAGE)
-                imagesAdapter.addImagePath(getImageFilePath(file.absolutePath))
+                imagesAdapter.addImagePath(BitmapHelper.rotateAndCompressImage(file.absolutePath))
         }
     }
 
     private fun hideKeyboard() = inputMethodManager.hideSoftInputFromWindow(et_url.windowToken, 0)
-
-    private fun getImageFilePath(filePath: String): String {
-        val bitmap = BitmapFactory.decodeFile(filePath)
-        return BitmapHelper.rotateAndCompressBitmap(bitmap, filePath)
-    }
 
     private fun getImageFilePath(data: Uri): String {
         data.path?.let {

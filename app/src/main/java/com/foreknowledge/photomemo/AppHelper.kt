@@ -36,36 +36,30 @@ object FileHelper {
 }
 
 object BitmapHelper {
-    fun bitmapToImageFile(context: Context, bitmap: Bitmap?): String {
-        if (bitmap == null) return ""
-
+    fun bitmapToImageFile(context: Context, bitmap: Bitmap): String {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
         val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         val imageFile = File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
 
-        FileOutputStream(imageFile)
-            .use {
-                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, it)
-                it.flush()
-
-                return imageFile.absolutePath
-            }
+        return compressBitmapToImageFile(imageFile.absolutePath, bitmap)
     }
 
-    fun rotateAndCompressBitmap(bitmap: Bitmap?, filePath: String): String {
-        if (bitmap == null) return ""
-
+    fun rotateAndCompressImage(filePath: String): String {
         val options = BitmapFactory.Options()
         options.inSampleSize = 2
 
         val rotatedBitmap = BitmapFactory.decodeFile(filePath, options).getRotateBitmap(filePath)
 
-        FileOutputStream(filePath)
+        return compressBitmapToImageFile(filePath, rotatedBitmap)
+    }
+
+    private fun compressBitmapToImageFile(imagePath: String, bitmap: Bitmap): String {
+        FileOutputStream(imagePath)
             .use {
-                rotatedBitmap.compress(Bitmap.CompressFormat.JPEG, 50, it)
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, it)
                 it.flush()
 
-                return filePath
+                return imagePath
             }
     }
 

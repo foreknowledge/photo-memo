@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.AsyncTask
+import android.widget.Toast
 import java.net.URL
 
 class ImageLoadTask(private val context: Context, private val urlStr: String, private val adapter: PreviewImageListAdapter) : AsyncTask<Void, Void, Bitmap>() {
@@ -14,15 +15,22 @@ class ImageLoadTask(private val context: Context, private val urlStr: String, pr
     override fun doInBackground(vararg p0: Void): Bitmap? =
         if (bitmapHash.containsKey(urlStr)) bitmapHash[urlStr]
         else {
-            val bitmap = BitmapFactory.decodeStream(URL(urlStr).openConnection().getInputStream())
-            bitmapHash[urlStr] = bitmap
-            bitmap
+            try {
+                val bitmap = BitmapFactory.decodeStream(URL(urlStr).openConnection().getInputStream())
+                bitmap?.let {
+                    bitmapHash[urlStr] = it
+                    it
+                }
+            } catch (e: Exception) { null }
         }
 
     override fun onPostExecute(bitmap: Bitmap?) {
         super.onPostExecute(bitmap)
 
-        adapter.addImagePath(BitmapHelper.bitmapToImageFile(context, bitmap))
+        if (bitmap != null)
+            adapter.addImagePath(BitmapHelper.bitmapToImageFile(context, bitmap))
+        else
+            Toast.makeText(context, "이미지 URL이 잘못되었습니다.", Toast.LENGTH_SHORT).show()
     }
 
 }
