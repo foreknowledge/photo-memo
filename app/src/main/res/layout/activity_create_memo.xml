@@ -133,7 +133,8 @@
 
                     <include
                         android:id="@+id/url_input_box"
-                        layout="@layout/url_input_box"/>
+                        layout="@layout/url_input_box"
+                        android:visibility="gone"/>
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/images_grid"
