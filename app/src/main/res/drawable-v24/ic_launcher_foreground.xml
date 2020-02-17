@@ -7,8 +7,8 @@
         </shape>
     </item>
     <item android:drawable="@drawable/ic_foreground"
-        android:top="180dp"
-        android:bottom="180dp"
-        android:right="140dp"
-        android:left="180dp"/>
+        android:top="100dp"
+        android:bottom="100dp"
+        android:right="80dp"
+        android:left="100dp"/>
 </layer-list>

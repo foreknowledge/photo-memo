@@ -2,7 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.foreknowledge.photomemo">
 
-    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
 
@@ -14,19 +17,22 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".DetailMemoActivity"></activity>
-        <activity android:name=".CreateMemoActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".SplashActivity"
+            android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".DetailMemoActivity" />
+        <activity android:name=".CreateMemoActivity" />
+        <activity android:name=".MainActivity">
+        </activity>
 
         <provider
-            android:authorities="${packageName}.fileprovider"
             android:name="androidx.core.content.FileProvider"
+            android:authorities="${packageName}.fileprovider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
