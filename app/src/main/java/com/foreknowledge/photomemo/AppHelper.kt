@@ -26,6 +26,10 @@ fun switchTo(context: Context, activity: Class<*>, bundle: Bundle? = null) {
     context.startActivity(intent)
 }
 
+object NetworkHelper {
+    fun isConnected(): Boolean = true
+}
+
 object FileHelper {
     fun createJpgFile(context: Context): File {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())

@@ -5,6 +5,7 @@ import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.android.synthetic.main.item_image_preview.view.*
@@ -15,7 +16,7 @@ class DetailImageListAdapter(context: Context, private val imagePaths: List<Stri
     }
 }
 
-class PreviewImageListAdapter(context: Context, private val imagePaths: MutableList<String>) : ImageListAdapter(context, imagePaths, R.layout.item_image_preview) {
+class PreviewImageListAdapter(private val context: Context, private val imagePaths: MutableList<String>) : ImageListAdapter(context, imagePaths, R.layout.item_image_preview) {
     companion object {
         const val MAX_IMAGE_COUNT = 10
 
@@ -50,9 +51,21 @@ class PreviewImageListAdapter(context: Context, private val imagePaths: MutableL
         history.add(ImageHistory(ADD_IMAGE, imagePath))
         imagePaths.add(imagePath)
         this.notifyDataSetChanged()
+
+        quitLoading()
+    }
+
+    fun showErrorMessage(msg: String) {
+        quitLoading()
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 
     fun isFull() = imagePaths.size == MAX_IMAGE_COUNT
+    
+    private fun quitLoading() {
+        if (context is CreateMemoActivity)
+            context.quitLoading()
+    }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.view.image_preview.setImageBitmap(BitmapFactory.decodeFile(imagePaths[position]))

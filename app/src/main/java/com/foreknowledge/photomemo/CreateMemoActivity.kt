@@ -74,6 +74,32 @@ class CreateMemoActivity : AppCompatActivity() {
                 PreviewImageListAdapter(context, mutableListOf())
     }
 
+    private fun setUrlInputBox() {
+        btn_hide.setOnClickListener {
+            url_input_box.visibility = View.GONE
+            et_url.text.clear()
+
+            hideKeyboard()
+        }
+        btn_clear.setOnClickListener { et_url.text.clear() }
+
+        btn_adjust.setOnClickListener {
+            if (et_url.text.toString().isBlank())
+                Toast.makeText(this, "Url 주소를 입력해 주세요.", Toast.LENGTH_SHORT).show()
+            else if (!NetworkHelper.isConnected())
+                Toast.makeText(this, "네트워크 연결 상태를 확인 해 주세요.", Toast.LENGTH_SHORT).show()
+            else {
+                ImageLoadTask(this, et_url.text.toString(), imagesAdapter).execute()
+                loadingPanel.visibility = View.VISIBLE
+                et_url.text.clear()
+            }
+
+            hideKeyboard()
+        }
+    }
+
+    fun quitLoading() { loadingPanel.visibility = View.INVISIBLE }
+
     fun saveMemo(v: View) {
         hideKeyboard()
 
@@ -133,26 +159,6 @@ class CreateMemoActivity : AppCompatActivity() {
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
 
         startActivityForResult(intent, CHOOSE_CAMERA_IMAGE)
-    }
-
-    private fun setUrlInputBox() {
-        btn_hide.setOnClickListener {
-            url_input_box.visibility = View.GONE
-            et_url.text.clear()
-
-            hideKeyboard()
-        }
-        btn_clear.setOnClickListener { et_url.text.clear() }
-
-        btn_adjust.setOnClickListener {
-            if (et_url.text.toString().isBlank())
-                Toast.makeText(this, "", Toast.LENGTH_SHORT).show()
-            else
-                ImageLoadTask(this, et_url.text.toString(), imagesAdapter).execute()
-            et_url.text.clear()
-
-            hideKeyboard()
-        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
