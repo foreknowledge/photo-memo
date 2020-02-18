@@ -1,12 +1,12 @@
 package com.foreknowledge.photomemo
 
-import android.annotation.TargetApi
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
 import android.net.ConnectivityManager
+import android.net.NetworkCapabilities.TRANSPORT_CELLULAR
 import android.net.NetworkCapabilities.TRANSPORT_WIFI
 import android.os.Build
 import android.os.Bundle
@@ -30,32 +30,23 @@ fun switchTo(context: Context, activity: Class<*>, bundle: Bundle? = null) {
     context.startActivity(intent)
 }
 
+@Suppress("DEPRECATION")
 object NetworkHelper {
     fun isConnected(context: Context): Boolean {
         val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 
-        return if (Build.VERSION.SDK_INT >= 23)
-            checkNetwork(connectivityManager)
-        else
-            checkNetworkOldVersion(connectivityManager)
-    }
+        if (Build.VERSION.SDK_INT >= 23) {
+            val network = connectivityManager.activeNetwork
+            val capabilities = connectivityManager.getNetworkCapabilities(network)
 
-    @TargetApi(23)
-    private fun checkNetwork(connectivityManager: ConnectivityManager): Boolean {
-        val network = connectivityManager.activeNetwork
-        val capabilities = connectivityManager.getNetworkCapabilities(network)
-
-        capabilities?.let {
-            return it.hasTransport(TRANSPORT_WIFI) || it.hasTransport(TRANSPORT_WIFI)
+            capabilities?.let {
+                return it.hasTransport(TRANSPORT_WIFI) || it.hasTransport(TRANSPORT_CELLULAR)
+            }
         }
-
-        return false
-    }
-
-    @Suppress("DEPRECATION")
-    private fun checkNetworkOldVersion(connectivityManager: ConnectivityManager): Boolean {
-        connectivityManager.activeNetworkInfo?.let {
-            return it.isConnectedOrConnecting
+        else {
+            connectivityManager.activeNetworkInfo?.let {
+                return it.isConnectedOrConnecting
+            }
         }
 
         return false
