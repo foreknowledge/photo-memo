@@ -86,7 +86,7 @@ class CreateMemoActivity : AppCompatActivity() {
         btn_adjust.setOnClickListener {
             if (et_url.text.toString().isBlank())
                 Toast.makeText(this, "Url 주소를 입력해 주세요.", Toast.LENGTH_SHORT).show()
-            else if (!NetworkHelper.isConnected())
+            else if (!NetworkHelper.isConnected(this))
                 Toast.makeText(this, "네트워크 연결 상태를 확인 해 주세요.", Toast.LENGTH_SHORT).show()
             else {
                 ImageLoadTask(this, et_url.text.toString(), imagesAdapter).execute()
