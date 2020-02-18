@@ -60,7 +60,7 @@ class CreateMemoActivity : AppCompatActivity() {
     }
 
     private fun fillContentIfExists() {
-        memoId = intent.getLongExtra("memoId", 0)
+        memoId = intent.getLongExtra(KeyName.MEMO_ID, 0)
 
         imagesAdapter =
             if (memoId != 0L) {

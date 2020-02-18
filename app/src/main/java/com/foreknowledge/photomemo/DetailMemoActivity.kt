@@ -17,7 +17,7 @@ class DetailMemoActivity : AppCompatActivity() {
 
         btn_edit.setOnClickListener {
             val bundle = Bundle()
-            bundle.putLong("memoId", memoId)
+            bundle.putLong(KeyName.MEMO_ID, memoId)
 
             switchTo(context, CreateMemoActivity::class.java, bundle)
         }
@@ -32,7 +32,7 @@ class DetailMemoActivity : AppCompatActivity() {
     }
 
     private fun fillContent() {
-        memoId = intent.getLongExtra("memoId", 0)
+        memoId = intent.getLongExtra(KeyName.MEMO_ID, 0)
 
         val memo = MemoDbTable(this).readMemo(memoId)
 
@@ -40,7 +40,7 @@ class DetailMemoActivity : AppCompatActivity() {
         text_memo_content.text = memo.content
 
         image_list.layoutManager = LinearLayoutManager(this)
-        image_list.adapter = DetailImageListAdapter(this, memo.imagePaths)
+        image_list.adapter = DetailImageListAdapter(this, memo.imagePaths, memoId)
     }
 
     private fun showAlertDialog() {

@@ -23,9 +23,15 @@ object RequestCode {
     const val CHOOSE_GALLERY_IMAGE = 102
 }
 
-fun switchTo(context: Context, activity: Class<*>, bundle: Bundle? = null) {
+object KeyName {
+    const val MEMO_ID = "memoId"
+    const val IMAGE_PATH = "imagePath"
+    const val POSITION = "position"
+}
+
+fun switchTo(context: Context, activity: Class<*>, extras: Bundle? = null) {
     val intent = Intent(context, activity)
-    bundle?.let{ intent.putExtras(bundle) }
+    extras?.let{ intent.putExtras(it) }
 
     context.startActivity(intent)
 }

@@ -31,12 +31,18 @@ class MainActivity : AppCompatActivity(), AutoPermissionsListener {
     override fun onResume() {
         super.onResume()
 
-        memoAdapter = MemoListAdapter(MemoDbTable(this).readAllMemo(), object: ItemClickListener{
-            override fun onClick(view: View, position: Int) {
-                val bundle = Bundle()
-                bundle.putLong("memoId", memoAdapter.getItem(position).id)
+        val memos = MemoDbTable(this).readAllMemo()
+        if (memos.isEmpty())
+            memo_notice.visibility = View.VISIBLE
+        else
+            memo_notice.visibility = View.INVISIBLE
 
-                switchTo(context, DetailMemoActivity::class.java, bundle)
+        memoAdapter = MemoListAdapter(memos, object: ItemClickListener{
+            override fun onClick(view: View, position: Int) {
+                val extras = Bundle()
+                extras.putLong(KeyName.MEMO_ID, memoAdapter.getItem(position).id)
+
+                switchTo(context, DetailMemoActivity::class.java, extras)
             }
         })
 

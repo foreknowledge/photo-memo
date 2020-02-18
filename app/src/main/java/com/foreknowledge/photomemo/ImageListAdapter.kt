@@ -2,6 +2,7 @@ package com.foreknowledge.photomemo
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,9 +11,16 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.android.synthetic.main.item_image_preview.view.*
 
-class DetailImageListAdapter(context: Context, private val imagePaths: List<String>) : ImageListAdapter(context, imagePaths, R.layout.item_image) {
+class DetailImageListAdapter(private val context: Context, private val imagePaths: List<String>, private val memoId: Long) : ImageListAdapter(context, imagePaths, R.layout.item_image) {
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.view.iv_image_item.setImageBitmap(BitmapFactory.decodeFile(imagePaths[position]))
+        holder.view.iv_image_item.setOnClickListener {
+            val extras = Bundle()
+            extras.putLong(KeyName.MEMO_ID, memoId)
+            extras.putInt(KeyName.POSITION, position)
+
+            switchTo(context, PhotoViewActivity::class.java, extras)
+        }
     }
 }
 
@@ -61,7 +69,7 @@ class PreviewImageListAdapter(private val context: Context, private val imagePat
     }
 
     fun isFull() = imagePaths.size == MAX_IMAGE_COUNT
-    
+
     private fun quitLoading() {
         if (context is CreateMemoActivity)
             context.quitLoading()

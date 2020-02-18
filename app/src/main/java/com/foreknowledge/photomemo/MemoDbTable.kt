@@ -63,7 +63,7 @@ class MemoDbTable(context: Context) {
     }
 
     fun remove(memoId: Long) {
-        val imagePaths = readMemo(memoId).imagePaths
+        val imagePaths = readImagePaths(memoId)
 
         dbHelper.writableDatabase
             .use {
@@ -110,12 +110,12 @@ class MemoDbTable(context: Context) {
     }
 
     fun readMemo(memoId: Long): Memo {
+        val columns = arrayOf(MemoEntry.TITLE_COL, MemoEntry.CONTENT_COL)
+        val selection = "${MemoEntry._ID} = $memoId"
+        val order = "${MemoEntry._ID} ASC"
+
         dbHelper.readableDatabase
             .use {
-                var columns = arrayOf(MemoEntry.TITLE_COL, MemoEntry.CONTENT_COL)
-                var selection = "${MemoEntry._ID} = $memoId"
-                var order = "${MemoEntry._ID} ASC"
-
                 val memoCursor = it.doQuery(MemoEntry.TABLE_NAME, columns, selection = selection, orderBy = order)
                 memoCursor.moveToNext()
 
@@ -124,21 +124,27 @@ class MemoDbTable(context: Context) {
 
                 memoCursor.close()
 
+                return Memo(memoId, title, content, readImagePaths(memoId))
+            }
+    }
 
-                val imagePaths: MutableList<String> = mutableListOf()
+    fun readImagePaths(memoId: Long): List<String> {
+        val imagePaths: MutableList<String> = mutableListOf()
 
-                columns = arrayOf(ImageEntry.MEMO_ID, ImageEntry.IMAGE_PATH_COL)
-                selection = "${ImageEntry.MEMO_ID} = $memoId"
-                order = "${ImageEntry._ID} ASC"
+        val columns = arrayOf(ImageEntry.MEMO_ID, ImageEntry.IMAGE_PATH_COL)
+        val selection = "${ImageEntry.MEMO_ID} = $memoId"
+        val order = "${ImageEntry._ID} ASC"
 
+        dbHelper.readableDatabase
+            .use {
                 val imageCursor = it.doQuery(ImageEntry.TABLE_NAME, columns, selection = selection, orderBy = order)
                 while (imageCursor.moveToNext())
                     imagePaths.add(imageCursor.getString(ImageEntry.IMAGE_PATH_COL))
 
                 imageCursor.close()
-
-                return Memo(memoId, title, content, imagePaths)
             }
+
+        return imagePaths
     }
 
     private fun SQLiteDatabase.doQuery(table: String, columns: Array<String>, selection: String? = null
