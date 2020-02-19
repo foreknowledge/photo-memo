@@ -5,8 +5,6 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
 
-data class Memo(val id: Long, val title: String, val content: String, val imagePaths: List<String> = listOf())
-
 const val DATABASE_NAME = "photomemo.db"
 const val DATABASE_VERSION = 10
 
@@ -25,6 +23,8 @@ object ImageEntry: BaseColumns {
     const val MEMO_ID = "memo_id"
     const val IMAGE_PATH_COL = "image_path"
 }
+
+data class Memo(val id: Long, val title: String, val content: String, val imagePaths: List<String> = listOf())
 
 class PhotoMemoDB(context: Context): SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 

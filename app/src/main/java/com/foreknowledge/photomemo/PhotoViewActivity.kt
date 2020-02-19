@@ -19,23 +19,6 @@ class PhotoViewActivity : AppCompatActivity() {
         btn_go_before.setOnClickListener { finish() }
     }
 
-    private fun setPhotoViewPager() {
-        photo_view_pager.adapter = photoPagerAdapter
-        photo_view_pager.offscreenPageLimit = photoPagerAdapter.count
-        photo_view_pager.currentItem = intent.getIntExtra(KeyName.POSITION, 0)
-
-        photo_view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
-            override fun onPageScrollStateChanged(state: Int) {}
-
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-                val text = "${position + 1} / ${photoPagerAdapter.count}"
-                page_indicator.text = text
-            }
-
-            override fun onPageSelected(position: Int) {}
-        })
-    }
-
     private fun setPhotoPagerAdapter() {
         val photoFragments = mutableListOf<PhotoFragment>()
 
@@ -53,5 +36,22 @@ class PhotoViewActivity : AppCompatActivity() {
 
         photoPagerAdapter = PhotoPagerAdapter(supportFragmentManager)
         photoPagerAdapter.photoFragments.addAll(photoFragments)
+    }
+
+    private fun setPhotoViewPager() {
+        photo_view_pager.adapter = photoPagerAdapter
+        photo_view_pager.offscreenPageLimit = photoPagerAdapter.count
+        photo_view_pager.currentItem = intent.getIntExtra(KeyName.POSITION, 0)
+
+        photo_view_pager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(state: Int) {}
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                val text = "${position + 1} / ${photoPagerAdapter.count}"
+                page_indicator.text = text
+            }
+
+            override fun onPageSelected(position: Int) {}
+        })
     }
 }

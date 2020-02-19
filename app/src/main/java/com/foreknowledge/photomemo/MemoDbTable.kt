@@ -6,7 +6,6 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 
 class MemoDbTable(context: Context) {
-
     private val dbHelper = PhotoMemoDB(context)
 
     fun store(title: String, content: String, imagePaths: List<String>) {
@@ -77,30 +76,20 @@ class MemoDbTable(context: Context) {
     }
 
     fun readAllMemo(): List<Memo> {
+        val memoList: MutableList<Memo> = mutableListOf()
+
+        val columns = arrayOf(MemoEntry._ID, MemoEntry.TITLE_COL, MemoEntry.CONTENT_COL)
+        val order = "${MemoEntry._ID} ASC"
+
         dbHelper.readableDatabase
             .use {
-                val memoList: MutableList<Memo> = mutableListOf()
-
-                var columns = arrayOf(MemoEntry._ID, MemoEntry.TITLE_COL, MemoEntry.CONTENT_COL)
-                var order = "${MemoEntry._ID} ASC"
-
                 val memoCursor = it.doQuery(MemoEntry.TABLE_NAME, columns, orderBy = order)
                 while (memoCursor.moveToNext()) {
                     val memoId = memoCursor.getLong(MemoEntry._ID)
                     val title = memoCursor.getString(MemoEntry.TITLE_COL)
                     val content = memoCursor.getString(MemoEntry.CONTENT_COL)
-                    val imagePaths: MutableList<String> = mutableListOf()
 
-                    columns = arrayOf(ImageEntry.MEMO_ID, ImageEntry.IMAGE_PATH_COL)
-                    val selection = "${ImageEntry.MEMO_ID} = $memoId"
-                    order = "${ImageEntry._ID} ASC"
-
-                    val imageCursor = it.doQuery(ImageEntry.TABLE_NAME, columns, selection = selection, orderBy = order)
-                    while (imageCursor.moveToNext())
-                        imagePaths.add(imageCursor.getString(ImageEntry.IMAGE_PATH_COL))
-
-                    memoList.add(Memo(memoId, title, content, imagePaths))
-                    imageCursor.close()
+                    memoList.add(Memo(memoId, title, content, readImagePaths(memoId)))
                 }
 
                 memoCursor.close()
@@ -156,7 +145,7 @@ class MemoDbTable(context: Context) {
     private fun Cursor.getLong(columnName: String) = getLong(getColumnIndex(columnName))
     private fun Cursor.getString(columnName: String) = getString(getColumnIndex(columnName))
 
-    private inline fun <T> SQLiteDatabase.transaction(function: SQLiteDatabase.() -> T): T {
+    private inline fun SQLiteDatabase.transaction(function: SQLiteDatabase.() -> Unit) {
         beginTransaction()
 
         val id = try {

@@ -15,7 +15,7 @@ class MemoListAdapter(private val memoList: List<Memo>, private val itemClickLis
 
     fun getItem(position: Int) = memoList[position]
 
-    open class MemoViewHolder(val view: View): RecyclerView.ViewHolder(view)
+    class MemoViewHolder(val view: View): RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MemoViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_memo, parent, false)

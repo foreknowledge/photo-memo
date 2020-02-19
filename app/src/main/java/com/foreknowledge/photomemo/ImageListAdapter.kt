@@ -11,6 +11,18 @@ import androidx.recyclerview.widget.RecyclerView
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.android.synthetic.main.item_image_preview.view.*
 
+abstract class ImageListAdapter(private val context: Context, private val imagePaths: List<String>, private val resource: Int) : RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>() {
+
+    class ImageViewHolder(val view: View): RecyclerView.ViewHolder(view)
+
+    override fun getItemCount(): Int = imagePaths.size
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
+        val view = LayoutInflater.from(context).inflate(resource, parent, false)
+        return ImageViewHolder(view)
+    }
+}
+
 class DetailImageListAdapter(private val context: Context, private val imagePaths: List<String>, private val memoId: Long) : ImageListAdapter(context, imagePaths, R.layout.item_image) {
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.view.iv_image_item.setImageBitmap(BitmapFactory.decodeFile(imagePaths[position]))
@@ -82,17 +94,5 @@ class PreviewImageListAdapter(private val context: Context, private val imagePat
             imagePaths.removeAt(position)
             notifyDataSetChanged()
         }
-    }
-}
-
-abstract class ImageListAdapter(private val context: Context, private val imagePaths: List<String>, private val resource: Int) : RecyclerView.Adapter<ImageListAdapter.ImageViewHolder>() {
-
-    class ImageViewHolder(val view: View): RecyclerView.ViewHolder(view)
-
-    override fun getItemCount(): Int = imagePaths.size
-
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
-        val view = LayoutInflater.from(context).inflate(resource, parent, false)
-        return ImageViewHolder(view)
     }
 }

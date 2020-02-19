@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentStatePagerAdapter
-import kotlinx.android.synthetic.main.fragment_photo.view.*
+import com.github.chrisbanes.photoview.PhotoView
 
 class PhotoPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
     val photoFragments = mutableListOf<PhotoFragment>()
@@ -20,12 +20,12 @@ class PhotoPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm, BEHA
 class PhotoFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val rootView = inflater.inflate(R.layout.fragment_photo, container, false)
+        val photoView = PhotoView(context)
 
         val imagePath = arguments?.getString(KeyName.IMAGE_PATH)
         val imageBitmap = BitmapFactory.decodeFile(imagePath)
-        rootView.photo_view.setImageBitmap(imageBitmap)
+        photoView.setImageBitmap(imageBitmap)
 
-        return rootView
+        return photoView
     }
 }
