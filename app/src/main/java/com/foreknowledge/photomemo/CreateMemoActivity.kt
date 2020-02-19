@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.foreknowledge.photomemo.PreviewImageListAdapter.Companion.MAX_IMAGE_COUNT
 import com.foreknowledge.photomemo.RequestCode.CHOOSE_CAMERA_IMAGE
 import com.foreknowledge.photomemo.RequestCode.CHOOSE_GALLERY_IMAGE
@@ -21,26 +22,29 @@ import kotlinx.android.synthetic.main.activity_create_memo.*
 import kotlinx.android.synthetic.main.url_input_box.*
 import java.io.File
 
-class CreateMemoActivity : AppCompatActivity() {
+class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartDragListener {
     private val context = this@CreateMemoActivity
 
-    private lateinit var imagesAdapter: PreviewImageListAdapter
+    private lateinit var previewAdapter: PreviewImageListAdapter
     private lateinit var inputMethodManager: InputMethodManager
     private lateinit var file: File
 
     private var memoId: Long = 0
+
+    private lateinit var itemTouchHelper: ItemTouchHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_memo)
 
         fillContentIfExists()
+        setPreviewItemTouchCallback()
 
         inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
-        images_grid.setHasFixedSize(true)
-        images_grid.layoutManager = GridLayoutManager(context, 4)
-        images_grid.adapter = imagesAdapter
+        preview_recycler.setHasFixedSize(true)
+        preview_recycler.layoutManager = GridLayoutManager(context, 4)
+        preview_recycler.adapter = previewAdapter
 
         btn_cancel.setOnClickListener { goBack() }
         btn_add_image.setOnClickListener { showMenu() }
@@ -55,23 +59,33 @@ class CreateMemoActivity : AppCompatActivity() {
     }
 
     private fun goBack() {
-        imagesAdapter.undo()
+        previewAdapter.undo()
         finish()
     }
 
     private fun fillContentIfExists() {
         memoId = intent.getLongExtra(KeyName.MEMO_ID, 0)
 
-        imagesAdapter =
+        previewAdapter =
             if (memoId != 0L) {
                 val memo = MemoDbTable(this).readMemo(memoId)
 
                 edit_memo_title.setText(memo.title)
                 edit_memo_content.setText(memo.content)
 
-                PreviewImageListAdapter(context, memo.imagePaths.toMutableList())
+                PreviewImageListAdapter(context, memo.imagePaths.toMutableList(), this)
             } else
-                PreviewImageListAdapter(context, mutableListOf())
+                PreviewImageListAdapter(context, mutableListOf(), this)
+    }
+
+    override fun onStartDrag(viewHolder: ImageListAdapter.ImageViewHolder) {
+        itemTouchHelper.startDrag(viewHolder)
+    }
+
+    private fun setPreviewItemTouchCallback() {
+        val callback = PreviewItemTouchCallback(previewAdapter)
+        itemTouchHelper = ItemTouchHelper(callback)
+        itemTouchHelper.attachToRecyclerView(preview_recycler)
     }
 
     private fun setUrlInputBox() {
@@ -89,7 +103,7 @@ class CreateMemoActivity : AppCompatActivity() {
             else if (!NetworkHelper.isConnected(this))
                 Toast.makeText(this, "네트워크 연결 상태를 확인 해 주세요.", Toast.LENGTH_SHORT).show()
             else {
-                ImageLoadTask(this, et_url.text.toString(), imagesAdapter).execute()
+                ImageLoadTask(this, et_url.text.toString(), previewAdapter).execute()
                 loadingPanel.visibility = View.VISIBLE
                 et_url.text.clear()
             }
@@ -110,23 +124,20 @@ class CreateMemoActivity : AppCompatActivity() {
 
         val title = edit_memo_title.text.toString()
         val content = edit_memo_content.text.toString()
-        val images = imagesAdapter.reflect()
+        val images = previewAdapter.reflect()
 
-        if (memoId != 0L) {
+        if (memoId != 0L)
             MemoDbTable(this).update(Memo(memoId, title, content, images))
-            Toast.makeText(this, "편집되었습니다.", Toast.LENGTH_SHORT).show()
-        }
-        else {
+        else
             MemoDbTable(this).store(title, content, images)
-            Toast.makeText(this, "저장되었습니다.", Toast.LENGTH_SHORT).show()
-        }
+
         finish()
     }
 
     private fun showMenu() {
         hideKeyboard()
 
-        if (imagesAdapter.isFull()) {
+        if (previewAdapter.isFull()) {
             Toast.makeText(this, "이미지 첨부는 ${MAX_IMAGE_COUNT}개까지만 가능합니다.", Toast.LENGTH_SHORT).show()
             return
         }
@@ -174,7 +185,7 @@ class CreateMemoActivity : AppCompatActivity() {
             else if (requestCode == CHOOSE_CAMERA_IMAGE)
                 resultImgPath = file.absolutePath
 
-            imagesAdapter.addImagePath(BitmapHelper.rotateAndCompressImage(resultImgPath))
+            previewAdapter.addImagePath(BitmapHelper.rotateAndCompressImage(resultImgPath))
         }
     }
 

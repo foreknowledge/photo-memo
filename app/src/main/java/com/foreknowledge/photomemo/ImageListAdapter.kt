@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
@@ -19,12 +20,14 @@ abstract class ImageListAdapter(private val context: Context, private val imageP
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ImageViewHolder {
         val view = LayoutInflater.from(context).inflate(resource, parent, false)
+
         return ImageViewHolder(view)
     }
 }
 
 class DetailImageListAdapter(private val context: Context, private val imagePaths: List<String>, private val memoId: Long) : ImageListAdapter(context, imagePaths, R.layout.item_image) {
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
+
         holder.view.iv_image_item.setImageBitmap(BitmapFactory.decodeFile(imagePaths[position]))
         holder.view.iv_image_item.setOnClickListener {
             val extras = Bundle()
@@ -36,12 +39,17 @@ class DetailImageListAdapter(private val context: Context, private val imagePath
     }
 }
 
-class PreviewImageListAdapter(private val context: Context, private val imagePaths: MutableList<String>) : ImageListAdapter(context, imagePaths, R.layout.item_image_preview) {
+class PreviewImageListAdapter(private val context: Context, private val imagePaths: MutableList<String>, private val onStartDragListener: OnStartDragListener)
+    : ImageListAdapter(context, imagePaths, R.layout.item_image_preview), PreviewItemTouchCallback.OnItemMoveListener {
     companion object {
         const val MAX_IMAGE_COUNT = 10
 
         const val ADD_IMAGE = 1
         const val DELETE_IMAGE = -1
+    }
+
+    interface OnStartDragListener {
+        fun onStartDrag(viewHolder: ImageViewHolder)
     }
 
     data class ImageHistory(val type: Int, val imagePath: String)
@@ -94,5 +102,20 @@ class PreviewImageListAdapter(private val context: Context, private val imagePat
             imagePaths.removeAt(position)
             notifyDataSetChanged()
         }
+
+        holder.view.image_preview.setOnTouchListener { _, motionEvent ->
+            if (motionEvent.actionMasked == MotionEvent.ACTION_DOWN)
+                onStartDragListener.onStartDrag(holder)
+
+            false
+        }
+    }
+
+    override fun onItemMove(fromPosition: Int, toPosition: Int) {
+        val target = imagePaths[fromPosition]
+        imagePaths.removeAt(fromPosition)
+        imagePaths.add(toPosition, target)
+
+        notifyItemMoved(fromPosition, toPosition)
     }
 }
