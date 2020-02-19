@@ -14,7 +14,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ItemTouchHelper
-import com.foreknowledge.photomemo.PreviewImageListAdapter.Companion.MAX_IMAGE_COUNT
 import com.foreknowledge.photomemo.RequestCode.CHOOSE_CAMERA_IMAGE
 import com.foreknowledge.photomemo.RequestCode.CHOOSE_GALLERY_IMAGE
 import com.google.android.material.snackbar.Snackbar
@@ -27,17 +26,16 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
 
     private lateinit var previewAdapter: PreviewImageListAdapter
     private lateinit var inputMethodManager: InputMethodManager
+    private lateinit var itemTouchHelper: ItemTouchHelper
     private lateinit var file: File
 
     private var memoId: Long = 0
-
-    private lateinit var itemTouchHelper: ItemTouchHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_memo)
 
-        fillContentIfExists()
+        setDefaultContentIfExists()
         setPreviewItemTouchCallback()
 
         inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -63,7 +61,27 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
         finish()
     }
 
-    private fun fillContentIfExists() {
+    fun quitLoading() { loadingPanel.visibility = View.INVISIBLE }
+
+    fun saveMemo(v: View) {
+        hideKeyboard()
+
+        if (edit_memo_title.text.toString().trim().isBlank()) {
+            Snackbar.make(v, Message.VACANT_TITLE, Snackbar.LENGTH_SHORT).show()
+            return
+        }
+
+        val title = edit_memo_title.text.toString()
+        val content = edit_memo_content.text.toString()
+        val images = previewAdapter.reflect()
+
+        if (memoId != 0L)
+            MemoDbTable(this).update(Memo(memoId, title, content, images))
+        else
+            MemoDbTable(this).store(title, content, images)
+
+        finish()
+    }private fun setDefaultContentIfExists() {
         memoId = intent.getLongExtra(KeyName.MEMO_ID, 0)
 
         previewAdapter =
@@ -76,10 +94,6 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
                 PreviewImageListAdapter(context, memo.imagePaths.toMutableList(), this)
             } else
                 PreviewImageListAdapter(context, mutableListOf(), this)
-    }
-
-    override fun onStartDrag(viewHolder: ImageListAdapter.ImageViewHolder) {
-        itemTouchHelper.startDrag(viewHolder)
     }
 
     private fun setPreviewItemTouchCallback() {
@@ -98,10 +112,12 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
         btn_clear.setOnClickListener { et_url.text.clear() }
 
         btn_adjust.setOnClickListener {
-            if (et_url.text.toString().isBlank())
-                Toast.makeText(this, "Url 주소를 입력해 주세요.", Toast.LENGTH_SHORT).show()
+            if (previewAdapter.isFull())
+                showToastMessage(Message.IMAGE_FULL)
+            else if (et_url.text.toString().isBlank())
+                showToastMessage(Message.VACANT_URL)
             else if (!NetworkHelper.isConnected(this))
-                Toast.makeText(this, "네트워크 연결 상태를 확인 해 주세요.", Toast.LENGTH_SHORT).show()
+                showToastMessage(Message.NETWORK_DISCONNECT)
             else {
                 ImageLoadTask(this, et_url.text.toString(), previewAdapter).execute()
                 loadingPanel.visibility = View.VISIBLE
@@ -112,33 +128,15 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
         }
     }
 
-    fun quitLoading() { loadingPanel.visibility = View.INVISIBLE }
+    private fun showToastMessage(message: String) = Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 
-    fun saveMemo(v: View) {
-        hideKeyboard()
-
-        if (edit_memo_title.text.toString().trim().isBlank()) {
-            Snackbar.make(v, "제목은 필수 입력 사항입니다.", Snackbar.LENGTH_SHORT).show()
-            return
-        }
-
-        val title = edit_memo_title.text.toString()
-        val content = edit_memo_content.text.toString()
-        val images = previewAdapter.reflect()
-
-        if (memoId != 0L)
-            MemoDbTable(this).update(Memo(memoId, title, content, images))
-        else
-            MemoDbTable(this).store(title, content, images)
-
-        finish()
-    }
+    private fun hideKeyboard() = inputMethodManager.hideSoftInputFromWindow(et_url.windowToken, 0)
 
     private fun showMenu() {
         hideKeyboard()
 
         if (previewAdapter.isFull()) {
-            Toast.makeText(this, "이미지 첨부는 ${MAX_IMAGE_COUNT}개까지만 가능합니다.", Toast.LENGTH_SHORT).show()
+            showToastMessage(Message.IMAGE_FULL)
             return
         }
 
@@ -172,25 +170,6 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
         startActivityForResult(intent, CHOOSE_CAMERA_IMAGE)
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-
-        if (url_input_box.visibility == View.VISIBLE) url_input_box.visibility = View.GONE
-
-        if (resultCode == Activity.RESULT_OK) {
-            var resultImgPath = ""
-
-            if (requestCode == CHOOSE_GALLERY_IMAGE && data != null && data.data != null)
-                resultImgPath = getImageFilePath(data.data!!)
-            else if (requestCode == CHOOSE_CAMERA_IMAGE)
-                resultImgPath = file.absolutePath
-
-            previewAdapter.addImagePath(BitmapHelper.rotateAndCompressImage(resultImgPath))
-        }
-    }
-
-    private fun hideKeyboard() = inputMethodManager.hideSoftInputFromWindow(et_url.windowToken, 0)
-
     private fun getImageFilePath(data: Uri): String {
         data.path?.let {
             contentResolver.query(data, null, null, null, null)
@@ -210,5 +189,26 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
         File(originalFilePath).copyTo(newFile, true)
 
         return newFile.absolutePath
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        if (url_input_box.visibility == View.VISIBLE) url_input_box.visibility = View.GONE
+
+        if (resultCode == Activity.RESULT_OK) {
+            var resultImgPath = ""
+
+            if (requestCode == CHOOSE_GALLERY_IMAGE && data != null && data.data != null)
+                resultImgPath = getImageFilePath(data.data!!)
+            else if (requestCode == CHOOSE_CAMERA_IMAGE)
+                resultImgPath = file.absolutePath
+
+            previewAdapter.addImagePath(BitmapHelper.rotateAndCompressImage(resultImgPath))
+        }
+    }
+
+    override fun onStartDrag(viewHolder: ImageListAdapter.ImageViewHolder) {
+        itemTouchHelper.startDrag(viewHolder)
     }
 }

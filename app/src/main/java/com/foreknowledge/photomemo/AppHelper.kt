@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import androidx.exifinterface.media.ExifInterface
+import com.foreknowledge.photomemo.PreviewImageListAdapter.Companion.MAX_IMAGE_COUNT
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -27,6 +28,13 @@ object KeyName {
     const val MEMO_ID = "memoId"
     const val IMAGE_PATH = "imagePath"
     const val POSITION = "position"
+}
+
+object Message {
+    const val IMAGE_FULL = "이미지 첨부는 ${MAX_IMAGE_COUNT}개까지만 가능합니다."
+    const val VACANT_URL = "Url 주소를 입력해 주세요."
+    const val NETWORK_DISCONNECT = "네트워크 연결 상태를 확인 해 주세요."
+    const val VACANT_TITLE = "제목은 필수 입력 사항입니다."
 }
 
 fun switchTo(context: Context, activity: Class<*>, extras: Bundle? = null) {
