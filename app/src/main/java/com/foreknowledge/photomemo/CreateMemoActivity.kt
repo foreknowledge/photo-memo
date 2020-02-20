@@ -1,5 +1,7 @@
 package com.foreknowledge.photomemo
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Context
@@ -108,7 +110,7 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
 
     private fun setUrlInputBox() {
         btn_hide.setOnClickListener {
-            url_input_box.visibility = View.GONE
+            fadeOutUrlInputBox()
             et_url.text.clear()
 
             hideKeyboard()
@@ -152,7 +154,7 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
                 when (i) {
                     0 -> switchToAlbum()
                     1 -> switchToCamera()
-                    2 -> url_input_box.visibility = View.VISIBLE
+                    2 -> fadeInUrlInputBox()
                 }
             }.show()
     }
@@ -172,6 +174,28 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
         intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
 
         startActivityForResult(intent, CHOOSE_CAMERA_IMAGE)
+    }
+
+    private fun fadeInUrlInputBox() {
+        url_input_box.apply {
+            alpha = 0f
+            visibility = View.VISIBLE
+            animate()
+                .alpha(1f)
+                .setDuration(300L)
+                .setListener(null)
+        }
+    }
+
+    private fun fadeOutUrlInputBox() {
+        url_input_box.animate()
+            .alpha(0f)
+            .setDuration(300L)
+            .setListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    url_input_box.visibility = View.GONE
+                }
+            })
     }
 
     private fun getImageFilePath(data: Uri): String {
