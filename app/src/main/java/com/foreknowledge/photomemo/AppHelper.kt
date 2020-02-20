@@ -26,7 +26,6 @@ object RequestCode {
 
 object KeyName {
     const val MEMO_ID = "memoId"
-    const val IMAGE_PATH = "imagePath"
     const val POSITION = "position"
 }
 

@@ -9,6 +9,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.github.chrisbanes.photoview.PhotoView
 import kotlinx.android.synthetic.main.item_image.view.*
 import kotlinx.android.synthetic.main.item_image_preview.view.*
 
@@ -27,7 +28,6 @@ abstract class ImageListAdapter(private val context: Context, private val imageP
 
 class DetailImageListAdapter(private val context: Context, private val imagePaths: List<String>, private val memoId: Long) : ImageListAdapter(context, imagePaths, R.layout.item_image) {
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
-
         holder.view.iv_image_item.setImageBitmap(BitmapFactory.decodeFile(imagePaths[position]))
         holder.view.iv_image_item.setOnClickListener {
             val extras = Bundle()
@@ -117,5 +117,23 @@ class PreviewImageListAdapter(private val context: Context, private val imagePat
         imagePaths.add(toPosition, target)
 
         notifyItemMoved(fromPosition, toPosition)
+    }
+}
+
+class PhotoRecyclerAdapter(private val context: Context, private val imagePaths: List<String>) : RecyclerView.Adapter<PhotoRecyclerAdapter.PhotoViewHolder>() {
+
+    class PhotoViewHolder(val view: PhotoView): RecyclerView.ViewHolder(view)
+
+    override fun getItemCount(): Int = imagePaths.size
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoViewHolder {
+        val photoView = PhotoView(context)
+        photoView.layoutParams = (ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))
+
+        return PhotoViewHolder(photoView)
+    }
+
+    override fun onBindViewHolder(holder: PhotoViewHolder, position: Int) {
+        holder.view.setImageBitmap(BitmapFactory.decodeFile(imagePaths[position]))
     }
 }
