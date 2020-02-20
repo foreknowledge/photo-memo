@@ -16,28 +16,38 @@
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/white"
-            android:padding="10dp"
             app:popupTheme="@style/Widget.AppCompat.Toolbar">
 
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:textColor="@color/colorPrimary"
-                android:text="@string/text_save"
-                android:textSize="20sp"
-                android:background="@android:color/transparent"
-                android:onClick="saveMemo"
-                style="?attr/buttonBarStyle" />
-
-            <Button
-                android:id="@+id/btn_cancel"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
+            <androidx.cardview.widget.CardView
                 android:layout_marginStart="15dp"
-                android:background="@drawable/ic_arrow_back_24dp" />
+                style="@style/ButtonCardViewStyle" >
+
+                <View
+                    android:background="@drawable/ic_arrow_back_24dp"
+                    style="@style/ViewStyleInCardView" />
+
+                <Button
+                    android:id="@+id/btn_cancel"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    style="@style/ViewStyleInCardView" />
+
+            </androidx.cardview.widget.CardView>
+
+            <androidx.cardview.widget.CardView
+                android:layout_gravity="end"
+                android:layout_marginEnd="15dp"
+                style="@style/ButtonCardViewStyle" >
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorPrimary"
+                    android:text="@string/text_save"
+                    android:textSize="20sp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:onClick="saveMemo" />
+
+            </androidx.cardview.widget.CardView>
 
         </androidx.appcompat.widget.Toolbar>
 
@@ -58,19 +68,13 @@
 
                 <EditText
                     android:id="@+id/edit_memo_title"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@android:color/white"
                     android:hint="@string/text_memo_title"
                     android:textStyle="bold"
                     android:importantForAutofill="no"
                     android:inputType="text"
                     android:maxLines="1"
                     android:maxLength="50"
-                    android:paddingStart="30dp"
-                    android:paddingTop="10dp"
-                    android:paddingEnd="30dp"
-                    android:paddingBottom="10dp" />
+                    style="@style/EditTextStyle"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -79,18 +83,12 @@
 
                 <EditText
                     android:id="@+id/edit_memo_content"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:hint="@string/text_memo_content"
                     android:minHeight="200dp"
                     android:gravity="top"
-                    android:background="@android:color/white"
-                    android:hint="@string/text_memo_content"
                     android:importantForAutofill="no"
                     android:inputType="textMultiLine"
-                    android:paddingStart="30dp"
-                    android:paddingTop="10dp"
-                    android:paddingEnd="30dp"
-                    android:paddingBottom="10dp" />
+                    style="@style/EditTextStyle"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -119,16 +117,20 @@
                             android:textColor="@android:color/black"
                             android:textSize="20sp" />
 
-                        <Button
-                            android:id="@+id/btn_add_image"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
+                        <androidx.cardview.widget.CardView
                             android:layout_gravity="end"
-                            android:textColor="@color/colorPrimary"
-                            android:text="@string/btn_add_image"
-                            android:textSize="18sp"
-                            android:background="@android:color/transparent"
-                            style="?attr/buttonBarStyle" />
+                            style="@style/ButtonCardViewStyle" >
+
+                            <Button
+                                android:id="@+id/btn_add_image"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textColor="@color/colorPrimary"
+                                android:text="@string/btn_add_image"
+                                android:textSize="18sp"
+                                android:background="?attr/selectableItemBackgroundBorderless" />
+
+                        </androidx.cardview.widget.CardView>
 
                     </FrameLayout>
 

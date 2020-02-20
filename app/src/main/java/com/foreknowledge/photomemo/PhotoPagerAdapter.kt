@@ -18,7 +18,6 @@ class PhotoPagerAdapter(fm: FragmentManager): FragmentStatePagerAdapter(fm, BEHA
 }
 
 class PhotoFragment: Fragment() {
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val photoView = PhotoView(context)
 

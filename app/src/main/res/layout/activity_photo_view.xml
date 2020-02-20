@@ -9,7 +9,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="10dp"
-        android:background="@android:color/black"
+        android:background="@android:color/white"
         app:popupTheme="@style/Widget.AppCompat.Toolbar">
 
         <TextView
@@ -17,22 +17,30 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textColor="@android:color/white"
+            android:textColor="@android:color/black"
             android:textSize="18sp" />
 
-        <Button
-            android:id="@+id/btn_go_before"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="15dp"
-            android:background="@drawable/ic_arrow_back_white_24dp" />
+        <androidx.cardview.widget.CardView
+            style="@style/ButtonCardViewStyle" >
+
+            <View
+                android:backgroundTint="@android:color/black"
+                android:background="@drawable/ic_arrow_back_24dp"
+                style="@style/ViewStyleInCardView" />
+
+            <Button
+                android:id="@+id/btn_go_before"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                style="@style/ViewStyleInCardView" />
+
+        </androidx.cardview.widget.CardView>
 
     </androidx.appcompat.widget.Toolbar>
 
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/photo_view_pager"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:color/black"/>
+        android:layout_height="match_parent"
+        android:background="@android:color/white" />
 
 </LinearLayout>
