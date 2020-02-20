@@ -80,20 +80,20 @@ class PreviewImageListAdapter(private val context: Context, private val imagePat
         imagePaths.add(imagePath)
         this.notifyDataSetChanged()
 
-        quitLoading()
+        if (context is CreateMemoActivity) {
+            context.quitLoading()
+            context.focusToBottom()
+        }
     }
 
     fun showErrorMessage(msg: String) {
-        quitLoading()
+        if (context is CreateMemoActivity)
+            context.quitLoading()
+
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 
     fun isFull() = imagePaths.size == MAX_IMAGE_COUNT
-
-    private fun quitLoading() {
-        if (context is CreateMemoActivity)
-            context.quitLoading()
-    }
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.view.image_preview.setImageBitmap(BitmapFactory.decodeFile(imagePaths[position]))

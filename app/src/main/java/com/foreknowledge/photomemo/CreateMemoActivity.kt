@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.ScrollView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.FileProvider
@@ -62,6 +63,7 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
     }
 
     fun quitLoading() { loadingPanel.visibility = View.INVISIBLE }
+    fun focusToBottom() { scroll_view.post { scroll_view.fullScroll(ScrollView.FOCUS_DOWN) } }
 
     fun saveMemo(v: View) {
         hideKeyboard()
@@ -81,7 +83,9 @@ class CreateMemoActivity : AppCompatActivity(), PreviewImageListAdapter.OnStartD
             MemoDbTable(this).store(title, content, images)
 
         finish()
-    }private fun setDefaultContentIfExists() {
+    }
+
+    private fun setDefaultContentIfExists() {
         memoId = intent.getLongExtra(KeyName.MEMO_ID, 0)
 
         previewAdapter =
