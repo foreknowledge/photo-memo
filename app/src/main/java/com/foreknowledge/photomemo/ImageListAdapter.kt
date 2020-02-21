@@ -57,7 +57,7 @@ class PreviewImageListAdapter(private val context: Context, private val imagePat
     private val originalImgPaths = imagePaths.toMutableList()
     private val history = mutableListOf<ImageHistory>()
 
-    fun reflect() : List<String> {
+    fun getImages() : List<String> {
         for (action in history)
             when (action.type) {
                 DELETE_IMAGE -> FileHelper.deleteFile(action.imagePath)
@@ -66,7 +66,7 @@ class PreviewImageListAdapter(private val context: Context, private val imagePat
         return imagePaths
     }
 
-    fun undo(): List<String> {
+    fun revertImages(): List<String> {
         for (action in history)
             when (action.type) {
                 ADD_IMAGE -> FileHelper.deleteFile(action.imagePath)

@@ -85,6 +85,7 @@
                     android:id="@+id/edit_memo_content"
                     android:hint="@string/text_memo_content"
                     android:minHeight="200dp"
+                    android:maxLength="1000000000"
                     android:gravity="top"
                     android:importantForAutofill="no"
                     android:inputType="textMultiLine"
@@ -156,7 +157,7 @@
     </LinearLayout>
 
     <RelativeLayout
-        android:id="@+id/loadingPanel"
+        android:id="@+id/loading_panel"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="#55000000"
