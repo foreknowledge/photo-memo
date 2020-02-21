@@ -27,7 +27,12 @@ class MemoListAdapter(private val memoList: List<Memo>, private val itemClickLis
     override fun onBindViewHolder(holder: MemoViewHolder, position: Int) {
         val memo = memoList[position]
 
-        holder.view.memo_title.text = memo.title
+        if (memo.title.isBlank()) {
+            holder.view.memo_title.visibility = View.GONE
+            holder.view.memo_content.maxLines = 4
+        }
+        else
+            holder.view.memo_title.text = memo.title
         holder.view.memo_content.text = memo.content
 
         if (memo.imagePaths.isNotEmpty()) {

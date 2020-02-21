@@ -22,7 +22,8 @@ class PreviewImageManager(private val context: Context, imagePaths: List<String>
 
     fun revertImages() = previewAdapter.revertImages()
     fun getImages() = previewAdapter.getImages()
-    fun isFull() = previewAdapter.isFull()
+    fun isImageEmpty() = previewAdapter.getImages().isEmpty()
+    fun isImageFull() = previewAdapter.isImageFull()
     fun addImageToAdapter(imagePath: String) = previewAdapter.addImagePath(BitmapHelper.rotateAndCompressImage(imagePath))
 
     fun importImageFrom(url: String) {

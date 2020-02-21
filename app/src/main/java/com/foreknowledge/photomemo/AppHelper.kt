@@ -33,7 +33,8 @@ object Message {
     const val IMAGE_FULL = "이미지 첨부는 ${MAX_IMAGE_COUNT}개까지만 가능합니다."
     const val VACANT_URL = "Url 주소를 입력해 주세요."
     const val NETWORK_DISCONNECT = "네트워크 연결 상태를 확인 해 주세요."
-    const val VACANT_TITLE = "제목은 필수 입력 사항입니다."
+    const val VACANT_TITLE = "제목 없음"
+    const val VACANT_CONTENT = "입력한 내용이 없어 메모를 저장하지 않았어요."
 }
 
 fun switchTo(context: Context, activity: Class<*>, extras: Bundle? = null) {

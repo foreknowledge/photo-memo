@@ -93,7 +93,7 @@ class PreviewImageListAdapter(private val context: Context, private val imagePat
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 
-    fun isFull() = imagePaths.size == MAX_IMAGE_COUNT
+    fun isImageFull() = imagePaths.size == MAX_IMAGE_COUNT
 
     override fun onBindViewHolder(holder: ImageViewHolder, position: Int) {
         holder.view.image_preview.setImageBitmap(BitmapFactory.decodeFile(imagePaths[position]))

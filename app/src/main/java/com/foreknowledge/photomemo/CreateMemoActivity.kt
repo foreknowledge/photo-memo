@@ -7,12 +7,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ScrollView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.foreknowledge.photomemo.RequestCode.CHOOSE_CAMERA_IMAGE
 import com.foreknowledge.photomemo.RequestCode.CHOOSE_GALLERY_IMAGE
-import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_create_memo.*
 import kotlinx.android.synthetic.main.url_input_box.*
 
@@ -35,14 +35,13 @@ class CreateMemoActivity : AppCompatActivity() {
         init()
         setUrlInputBox()
 
+        btn_save.setOnClickListener { saveMemo() }
         btn_cancel.setOnClickListener { goBack() }
         btn_add_image.setOnClickListener { showMenu() }
-
     }
 
     override fun onBackPressed() {
         super.onBackPressed()
-
         goBack()
     }
 
@@ -60,7 +59,8 @@ class CreateMemoActivity : AppCompatActivity() {
             if (memoId != 0L) {
                 val memo = MemoDbTable(context).readMemo(memoId)
 
-                edit_memo_title.setText(memo.title)
+                if (memo.title.isNotBlank())
+                    edit_memo_title.setText(memo.title)
                 edit_memo_content.setText(memo.content)
                 memo.imagePaths
             }
@@ -82,7 +82,7 @@ class CreateMemoActivity : AppCompatActivity() {
         btn_clear.setOnClickListener { et_url.text.clear() }
 
         btn_adjust.setOnClickListener {
-            if (previewManager.isFull())
+            if (previewManager.isImageFull())
                 showToastMessage(Message.IMAGE_FULL)
             else if (et_url.text.toString().isBlank())
                 showToastMessage(Message.VACANT_URL)
@@ -104,7 +104,7 @@ class CreateMemoActivity : AppCompatActivity() {
     private fun showMenu() {
         hideKeyboard()
 
-        if (previewManager.isFull()) {
+        if (previewManager.isImageFull()) {
             showToastMessage(Message.IMAGE_FULL)
             return
         }
@@ -121,6 +121,26 @@ class CreateMemoActivity : AppCompatActivity() {
                 }
             }.show()
     }
+
+    private fun saveMemo() {
+        if (edit_memo_title.isBlank() && edit_memo_content.isBlank() && previewManager.isImageEmpty() ) {
+            showToastMessage(Message.VACANT_CONTENT)
+        }
+        else {
+            val title = edit_memo_title.text.toString().trim()
+            val content = edit_memo_content.text.toString()
+            val images = previewManager.getImages()
+
+            if (memoId != 0L)
+                MemoDbTable(this).update(Memo(memoId, title, content, images))
+            else
+                MemoDbTable(this).store(title, content, images)
+        }
+
+        finish()
+    }
+
+    private fun EditText.isBlank() = this.text.toString().trim().isBlank()
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
@@ -143,24 +163,4 @@ class CreateMemoActivity : AppCompatActivity() {
 
     fun quitLoading() { loading_panel.visibility = View.INVISIBLE }
     fun focusToBottom() { scroll_view.post { scroll_view.fullScroll(ScrollView.FOCUS_DOWN) } }
-
-    fun saveMemo(v: View) {
-        hideKeyboard()
-
-        if (edit_memo_title.text.toString().trim().isBlank()) {
-            Snackbar.make(v, Message.VACANT_TITLE, Snackbar.LENGTH_SHORT).show()
-            return
-        }
-
-        val title = edit_memo_title.text.toString()
-        val content = edit_memo_content.text.toString()
-        val images = previewManager.getImages()
-
-        if (memoId != 0L)
-            MemoDbTable(this).update(Memo(memoId, title, content, images))
-        else
-            MemoDbTable(this).store(title, content, images)
-
-        finish()
-    }
 }

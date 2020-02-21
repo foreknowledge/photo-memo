@@ -2,6 +2,7 @@ package com.foreknowledge.photomemo
 
 import android.app.AlertDialog
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_detail_memo.*
@@ -36,7 +37,10 @@ class DetailMemoActivity : AppCompatActivity() {
 
         val memo = MemoDbTable(this).readMemo(memoId)
 
-        text_memo_title.text = memo.title
+        if (memo.title.isBlank())
+            text_memo_title.visibility = View.GONE
+        else
+            text_memo_title.text = Message.VACANT_TITLE
         text_memo_content.text = memo.content
 
         image_list.layoutManager = LinearLayoutManager(this)
