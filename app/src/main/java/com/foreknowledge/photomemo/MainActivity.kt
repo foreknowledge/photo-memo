@@ -20,8 +20,11 @@ class MainActivity : AppCompatActivity(), AutoPermissionsListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        val linearLayoutManager = LinearLayoutManager(context)
+        linearLayoutManager.reverseLayout = true
+        linearLayoutManager.stackFromEnd = true
+        memo_list.layoutManager = linearLayoutManager
         memo_list.setHasFixedSize(true)
-        memo_list.layoutManager = LinearLayoutManager(context)
 
         btn_create_memo.setOnClickListener { switchTo(context, CreateMemoActivity::class.java) }
 
