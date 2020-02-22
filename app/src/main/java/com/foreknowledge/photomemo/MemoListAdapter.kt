@@ -33,7 +33,11 @@ class MemoListAdapter(private val memoList: List<Memo>, private val itemClickLis
         }
         else
             holder.view.memo_title.text = memo.title
-        holder.view.memo_content.text = memo.content
+
+        if (memo.content.isBlank())
+            holder.view.memo_content.visibility = View.GONE
+        else
+            holder.view.memo_content.text = memo.content
 
         if (memo.imagePaths.isNotEmpty()) {
             holder.view.thumbnail_image.setImageBitmap(BitmapFactory.decodeFile(memo.imagePaths[0]))
