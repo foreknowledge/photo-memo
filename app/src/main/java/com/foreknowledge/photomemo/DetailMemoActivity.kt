@@ -39,8 +39,11 @@ class DetailMemoActivity : AppCompatActivity() {
 
         if (memo.title.isBlank())
             text_memo_title.visibility = View.GONE
-        else
+        else {
+            text_memo_title.visibility = View.VISIBLE
             text_memo_title.text = memo.title
+        }
+
         text_memo_content.text = memo.content
 
         image_list.layoutManager = LinearLayoutManager(this)

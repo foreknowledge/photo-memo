@@ -39,12 +39,13 @@ class MemoListAdapter(private val memoList: List<Memo>, private val itemClickLis
         else
             holder.view.memo_content.text = memo.content
 
-        if (memo.imagePaths.isNotEmpty()) {
+        if (memo.imagePaths.isEmpty())
+            holder.view.thumbnail_card_view.visibility = View.GONE
+        else {
             holder.view.thumbnail_image.setImageBitmap(BitmapFactory.decodeFile(memo.imagePaths[0]))
             holder.view.num_of_images.text = memo.imagePaths.size.toString()
         }
-        else
-            holder.view.thumbnail_card_view.visibility = View.GONE
+
 
         holder.view.setOnClickListener{
             itemClickListener.onClick(it, position)
