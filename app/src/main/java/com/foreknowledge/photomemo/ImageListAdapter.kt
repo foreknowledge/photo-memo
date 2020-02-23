@@ -42,7 +42,7 @@ class DetailImageListAdapter(private val context: Context, private val imagePath
 class PreviewImageListAdapter(private val context: Context, private val imagePaths: MutableList<String>, private val onStartDragListener: OnStartDragListener)
     : ImageListAdapter(context, imagePaths, R.layout.item_image_preview), PreviewItemTouchCallback.OnItemMoveListener {
     companion object {
-        const val MAX_IMAGE_COUNT = 10
+        const val MAX_IMAGE_COUNT = 30
 
         const val ADD_IMAGE = 1
         const val DELETE_IMAGE = -1

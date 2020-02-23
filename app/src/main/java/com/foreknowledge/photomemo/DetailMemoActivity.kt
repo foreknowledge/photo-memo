@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_detail_memo.*
 
@@ -46,7 +47,8 @@ class DetailMemoActivity : AppCompatActivity() {
 
         text_memo_content.text = memo.content
 
-        image_list.layoutManager = LinearLayoutManager(this)
+        image_list.setHasFixedSize(true)
+        image_list.layoutManager = GridLayoutManager(context, 2)
         image_list.adapter = DetailImageListAdapter(this, memo.imagePaths, memoId)
     }
 

@@ -93,7 +93,7 @@ object BitmapHelper {
         if (File(filePath).length() > 1000000)
             options.inSampleSize = 2
 
-        val rotatedBitmap = BitmapFactory.decodeFile(filePath, options).getRotateBitmap(filePath)
+        val rotatedBitmap = BitmapFactory.decodeFile(filePath, options).getRotatedBitmap(filePath)
 
         return compressBitmapToImageFile(filePath, rotatedBitmap)
     }
@@ -108,7 +108,7 @@ object BitmapHelper {
             }
     }
 
-    private fun Bitmap.getRotateBitmap(photoPath: String): Bitmap {
+    private fun Bitmap.getRotatedBitmap(photoPath: String): Bitmap {
         val exifInterface = ExifInterface(photoPath)
         val orientation: Int = exifInterface.getAttributeInt(
             ExifInterface.TAG_ORIENTATION,
