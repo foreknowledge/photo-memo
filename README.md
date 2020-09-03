@@ -1,4 +1,4 @@
-# PhotoMemo
+# Photo Memo
 
 ## 개요
 
